@@ -7,8 +7,6 @@
 
 #include "DualNumber.h"
 
-// to implement:
-
 using namespace DualNumberAlgebra;
 
 namespace RobotAlgebra {
@@ -20,26 +18,46 @@ namespace RobotAlgebra {
     using Vec3 = Eigen::Matrix<T,3,1>;
 
     template<class T>
-    using Adj = Eigen::Matrix<T,6,6>;
+    using Mat6 = Eigen::Matrix<T,6,6>;
+
+    template<class T>
+    using Mat4 = Eigen::Matrix<T,4,4>;
+
+    template<class T>
+    using Pluecker = Eigen::Matrix<T,6,1>;
 
     struct Distance {
         double d;
         double phi;
         Distance(double d, double phi) : d(d), phi(phi) {};
+        Distance(const DualNumber<double> & dn) noexcept {
+            phi = acos(dn.getReal());
+            d = - dn.getDual() / sin(phi);
+        };
     };
 
     template<class T>
-    void decompose(const Adj<T> & adj, Mat3<T> &rot, Vec3<T> &trans) {
-        rot = adj.topLeftCorner(3,3);
-
-        Mat3<T> sk = adj.bottomLeftCorner(3,3) * rot.inverse();
-        trans << sk(2,1), sk(0,2), sk(1,0);
+    Mat3<T> create_cross_mat(const Vec3<T> &data) noexcept {
+        Mat3<T> m;
+        m << T(0), -data(2,0), data(1,0),
+                data(2,0), T(0), -data(0,0),
+                -data(1,0), data(0,0), T(0);
+        return m;
     }
 
-    //generic
     template<class T>
-    Adj<T> adjungate(const Mat3<T> & diag, const Mat3<T> & dual) noexcept {
-        Adj<T> data;
+    Pluecker<T> create_pluecker_from_points(const Vec3<T> &a, const Vec3<T> &b) noexcept {
+        Vec3<T> n = b - a;
+        n = n / n.norm();
+        Vec3<T> m = a.cross(n);
+        Pluecker<T> p;
+        p << n, m;
+        return p;
+    }
+
+    template<class T>
+    Mat6<T> create_adjungate(const Mat3<T> & diag, const Mat3<T> & dual) noexcept {
+        Mat6<T> data;
         data.topLeftCorner(3, 3)     = diag;
         data.topRightCorner(3, 3)     = Mat3<T>::Zero(3, 3);
         data.bottomLeftCorner(3, 3)     = dual;
@@ -48,96 +66,92 @@ namespace RobotAlgebra {
     }
 
     template<class T>
-    Adj<T> waschmaschine(const Adj<T> & adj) noexcept {
-        return - adj*adj;
-    }
-
-    template<class T>
-    Adj<T> sandwich(const Adj<T> & adj) noexcept {
-        return Adj<T>::Identity(6,6) - adj;
-    }
-
-    template<class T>
-    Adj<T> adjungateDualAngle(const DualNumber<T> &dn) noexcept {
+    Mat6<T> adjungate_dualangle(const DualNumber<T> &dn) noexcept {
         Mat3<T> i3 = Mat3<T>::Identity(3,3);
         Mat3<T> diag = dn.getReal() * i3;
         Mat3<T> dual = dn.getDual() * i3;
-        return adjungate( diag, dual);
+        return create_adjungate(
+                static_cast<Mat3<T>>(dn.getReal() * i3),
+                static_cast<Mat3<T>>(dn.getDual() * i3));
     }
 
     template<class T>
-    Mat3<T> cross_mat(const Vec3<T> &data) noexcept {
-        Mat3<T> m;
-        m << T(0), -data(2,0), data(1,0),
-             data(2,0), T(0), -data(0,0),
-            -data(1,0), data(0,0), T(0);
-        return m;
+    Mat6<T> adjungate_pluecker(const Pluecker<T> & p) noexcept {
+        return create_adjungate(
+                create_cross_mat(static_cast<Vec3<T>>(p.head(3))),
+                create_cross_mat(static_cast<Vec3<T>>(p.tail(3))));
     }
 
     template<class T>
-    class Pluecker {
-    public:
-        Vec3<T> m;
-        Vec3<T> n;
-
-        Pluecker(const Vec3<T> & n, const Vec3<T> & m) noexcept {
-            this->n = n;
-            this->m = m;
-        }
-
-        static Pluecker<T> fromPoints(const Vec3<T> &a, const Vec3<T> &b) noexcept {
-            Vec3<T> n = b - a;
-            n = n / n.norm();
-            Vec3<T> m = a.cross(n);
-            return Pluecker<T>(n,m);
-        }
-
-        Adj<T> adjungatePluecker() const noexcept{
-            return adjungate(cross_mat(n), cross_mat(m));
-        }
-
-        Vec3<DualNumber<T>> getDualLine() const noexcept{
-            Vec3<DualNumber<T>> l;
-            l<< DualNumber(n(0,0), m(0,0)),
-                DualNumber(n(1,0), m(1,0)),
-                DualNumber(n(2,0), m(2,0));
-            return l;
-        }
-
-        Adj<T> REGG(DualNumber<T> phi) const noexcept {
-            Adj<T> adj = this->adjungatePluecker();
-            Adj<T> wm = waschmaschine(adj);
-            Adj<T> sw = sandwich(wm);
-
-            return adjungateDualAngle(cos(phi)) * wm +
-                       adjungateDualAngle(sin(phi)) * adj +
-                       sw;
-
-        }
-
-        DualNumber<T> dot(const Pluecker &rhs) const noexcept {
-            return this->getDualLine().transpose() * rhs.getDualLine();
-        }
-
-        Distance getDistance(const Pluecker &rhs) const noexcept {
-            DualNumber<T> dn = this->dot(rhs);
-            double phi = acos(dn.getReal());
-            double d = - dn.getDual() / sin(phi);
-            return Distance(d, phi);
-        }
-
-
-    };
-}
-
-#include <iostream>
-#include <iomanip>
-
-namespace std {
+    Mat6<T> convert_mat4_to_mat6(const Mat4<T> & hom) noexcept {
+        Vec3<T> trans = hom.topRightCorner(3,1);
+        Mat3<T> R = hom.topLeftCorner(3,3);
+        Mat3<T> skewR = create_cross_mat(trans) * R;
+        return create_adjungate(R, skewR);
+    }
 
     template<class T>
-    std::ostream &operator<<(std::ostream &stream, RobotAlgebra::Pluecker<T> const &d) {
-        return stream << d.n << std::endl << d.m << std::endl;
+    Mat4<T> convert_mat6_to_mat4(const Mat6<T> & adj) noexcept {
+        Mat4<T> hom = Mat4<T>::Identity(4,4);
+        hom.topLeftCorner(3,3) = adj.topLeftCorner(3,3);
+
+        Mat3<T> sk = adj.bottomLeftCorner(3,3) * hom.topLeftCorner(3,3).inverse();
+
+        hom(0,3) = sk(2,1);
+        hom(1,3) = sk(0,2);
+        hom(2,3) = sk(1,0);
+
+        return hom;
+    }
+
+    template<class T>
+    Mat3<T> get_rot(const Mat4<T> & hom) noexcept {
+        return hom.topLeftCorner(3,3);
+    }
+
+    template<class T>
+    Vec3<T> get_trans(const Mat4<T> & hom) noexcept {
+        return hom.topRightCorner(3,1);
+    }
+
+    template<class T>
+    Vec3<DualNumber<T>> get_dualline(const Pluecker<T> & p) noexcept{
+        Vec3<DualNumber<T>> l;
+        l<< DualNumber(p(0,0), p(3,0)),
+            DualNumber(p(1,0), p(4,0)),
+            DualNumber(p(2,0), p(5,0));
+        return l;
+    }
+
+    template<class T>
+    Mat6<T> REGG(const Pluecker<T> & p, const DualNumber<T> & phi) noexcept {
+        // see papers for the signs Waschmaschine, Sandwich, ...
+        Mat6<T> orthoterm = adjungate_pluecker(p);
+        Mat6<T> uniterm = - orthoterm * orthoterm; //eq -i^2
+        Mat6<T> nullterm = Mat6<T>::Identity(6,6) - uniterm;
+
+        return adjungate_dualangle(cos(phi)) * uniterm +
+               adjungate_dualangle(sin(phi)) * orthoterm +
+               nullterm;
+
+    }
+
+    template<class T>
+    DualNumber<T> dot(const Pluecker<T> &lhs, const Pluecker<T> &rhs) noexcept {
+        return lhs.get_dualLine().transpose() * rhs.get_dualLine();
+    }
+
+    // syntactic sugar for scalar product
+    template<class T>
+    DualNumber<T> operator*(const Pluecker<T> &lhs, const Pluecker<T> &rhs) noexcept {
+        return dot(lhs, rhs);
+    }
+
+    template<class T>
+    Distance getDistance(const Pluecker<T> &lhs, const Pluecker<T> &rhs) noexcept {
+        DualNumber<T> dn = lhs*rhs;
+        // implies that T is double! TODO type safe
+        return Distance(dn);
     }
 }
 

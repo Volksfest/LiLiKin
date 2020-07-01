@@ -178,6 +178,11 @@ namespace DualNumberAlgebra {
         return DualNumber<double>(0.0, dual);
     }
 
+    // Convenience for real part for dual angles
+    double operator "" _d(long double degree) noexcept{
+        return degree * M_PI / 180.0;
+    }
+
     // Simpler outputstream in the form "(a+bs)"
     #include <iostream>
     template<class T>

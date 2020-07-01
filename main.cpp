@@ -11,39 +11,26 @@
 using namespace DualNumberAlgebra;
 using namespace RobotAlgebra;
 
-double r2d(double r) {
-    return r/M_PI * 180.0;
+template<class T>
+T filter_zero(const T &a, double epsilon = 1e-8) {
+    return (a.array().abs() > epsilon).select(a, 0.0);
 }
 
 int main() {
 
-    auto ab = Pluecker<double>::fromPoints(Vec3<double>(1.0, 1.0, 0.0), Vec3<double>(2.0, 1.0, 0.0));
+    Pluecker<double> ab = create_pluecker_from_points(
+            Vec3<double>(1.0, 1.0, 0.0),
+            Vec3<double>(2.0, 1.0, 0.0));
 
-    auto phi = M_PI + 0.0_s;
+    DualNumber<double> phi = 180.0_d + 2.0_s;
 
-    auto d = ab.REGG(phi);
+    Mat6<double> d = REGG(ab, phi);
+    Mat4<double> hom = convert_mat6_to_mat4(d);
 
-    auto adj = ab.adjungatePluecker();
-    std::cout << adj <<std::endl << std::endl;
-
-    auto ws = waschmaschine(adj);
-    std::cout << ws <<std::endl << std::endl;
-
-    auto sw = sandwich(ws);
-    std::cout << sw <<std::endl << std::endl;
-
-    std::cout << "sin: " << std::endl << adjungateDualAngle(sin(phi)) <<std::endl << std::endl;
-    std::cout << "cos: " << std::endl << adjungateDualAngle(cos(phi))  << std::endl << std::endl;
-
-    std::cout << ws + sw << std::endl << std::endl;
-
-
-    Mat3<double> rot;
-    Vec3<double> trans;
-    decompose(d, rot, trans);
-    std::cout << d << std::endl << std::endl;
-
-    std::cout << rot << std::endl <<std::endl<< trans << std::endl;
+    std::cout << "Adjungierte Displacement: " << std::endl << filter_zero(d) << std::endl << std::endl;
+    std::cout << "Rot:" << std::endl << filter_zero(get_rot(hom)) << std::endl <<std::endl<< "Trans:" << std::endl << filter_zero(get_trans(hom)) << std::endl;
+    std::cout << "Hom:" << std::endl << filter_zero(hom) << std::endl << std::endl;
+    std::cout << "Adjungierte Displacement: " << std::endl << filter_zero(convert_mat4_to_mat6(hom)) << std::endl << std::endl;
 
     return 0;
 }
