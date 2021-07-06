@@ -7,6 +7,8 @@
 
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
+#include <eigen3/Eigen/Eigen>
 
 namespace DualNumberAlgebra {
 
@@ -22,6 +24,9 @@ namespace DualNumberAlgebra {
             this->_dual = dual;
         }
 
+        bool isZero() const noexcept {
+            return this->_real == 0 && this->_dual == 0;
+        }
 
         // basic
         DualNumber<T> &operator=(const DualNumber<T> &rhs) noexcept {
@@ -76,15 +81,16 @@ namespace DualNumberAlgebra {
             if (this->_real == 0) {
                 throw std::logic_error("Cannot invert a dual number with real part equals to zero");
             }
-            return DualNumber<T>(1 / this->_real, -this->_dual / this->_real / this->_real);
+            T inv = 1 / this->_real;
+            return DualNumber<T>(inv, -this->_dual * inv * inv);
         }
 
-        T norm() const {
-            return this->_real >= 0 ? this->_real : -this->_real;
+        double norm() const {
+            return static_cast<double>(this->_real >= 0 ? this->_real : -this->_real);
         }
 
         DualNumber<T> operator/(const DualNumber<T> &rhs) const {
-            if (this->_real == 0) {
+            if (rhs._real == 0) {
                 throw std::logic_error("Cannot divide by a dual number with real part equals to zero");
             }
             return DualNumber<T>(this->_real / rhs._real,
@@ -105,62 +111,7 @@ namespace DualNumberAlgebra {
         T _dual;
     };
 
-    template<class T>
-    DualNumber<T> sin(const DualNumber<T> & phi) noexcept {
-        const T &r = phi.getReal();
-        const T &d = phi.getDual();
-        return DualNumber<T>(std::sin(r), d * std::cos(r));
-    }
-
-    template<class T>
-    DualNumber<T> asin(const DualNumber<T> & w) noexcept {
-        const T &r = w.getReal();
-        const T nr = std::asin(r);
-        const T &d = w.getDual();
-        return DualNumber<T>(nr, d / std::cos(nr));
-    }
-
-    template<class T>
-    DualNumber<T> cos(const DualNumber<T> & phi) noexcept {
-        const T &r = phi.getReal();
-        const T &d = phi.getDual();
-        return DualNumber<T>(std::cos(r), -d * std::sin(r));
-    }
-
-    template<class T>
-    DualNumber<T> acos(const DualNumber<T> & w) noexcept {
-        const T &r = w.getReal();
-        const T nr = std::acos(r);
-        const T &d = w.getDual();
-        return DualNumber<T>(nr, -d / std::sin(nr));
-    }
-
-    template<class T>
-    DualNumber<T> tan(const DualNumber<T> & phi) noexcept {
-        const T &r = phi.getReal();
-        const T &d = phi.getDual();
-        const T cr = std::cos(r);
-        return DualNumber<T>(std::tan(r), d / cr / cr);
-    }
-
-    template<class T>
-    DualNumber<T> atan(const DualNumber<T> & w) noexcept {
-        const T &r = w.getReal();
-        const T nr = std::atan(r);
-        const T &d = w.getDual();
-        const T cnr = std::cos(nr);
-        return DualNumber<T>(nr, -d * cnr * cnr);
-    }
-
-    template <class T>
-    DualNumber<T> atan2(const DualNumber<T> &y, const DualNumber<T> &x) noexcept {
-        const T &xr = x.getReal();
-        const T &yr = y.getReal();
-        const T &xd = x.getDual();
-        const T &yd = y.getDual();
-        return DualNumber<T>(std::atan2(yr, xr), (xr*yd - xd * yr) / ( xr * xr + yr * yr));
-    }
-
+    // To get the conjugate operator as a static function for eigen
     template<class T>
     inline const DualNumber<T> conj(const DualNumber<T>& x)  {
         return x.conjugate();
@@ -174,22 +125,34 @@ namespace DualNumberAlgebra {
 
     // for constant pure dual number const defining
     // e.g 1.0 + 3.0_s can be written as a const for a dual number
-    DualNumber<double> operator "" _s(long double dual) noexcept{
-        return DualNumber<double>(0.0, dual);
-    }
+    DualNumber<double> operator "" _s(long double dual) noexcept;
 
     // Convenience for real part for dual angles
-    double operator "" _d(long double degree) noexcept{
-        return degree * M_PI / 180.0;
-    }
+    double operator "" _d(long double degree) noexcept;
 
     // Simpler outputstream in the form "(a+bs)"
-    #include <iostream>
+
     template<class T>
     std::ostream &operator<<(std::ostream &stream, DualNumberAlgebra::DualNumber<T> const &d) {
         T dual = d.getDual();
         return (stream << "(" << d.getReal() << (dual < 0 ? "-" : "+") << (dual < 0 ? -dual : dual) << "s)");
     }
+
+    DualNumberAlgebra::DualNumber<double> sqrt(const DualNumberAlgebra::DualNumber<double> & phi) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> sin(const DualNumberAlgebra::DualNumber<double> & phi) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> asin(const DualNumberAlgebra::DualNumber<double> & w) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> cos(const DualNumberAlgebra::DualNumber<double> & phi) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> acos(const DualNumberAlgebra::DualNumber<double> & w) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> tan(const DualNumberAlgebra::DualNumber<double> & phi) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> atan(const DualNumberAlgebra::DualNumber<double> & w) noexcept;
+
+    DualNumberAlgebra::DualNumber<double> atan2(const DualNumberAlgebra::DualNumber<double> &y, const DualNumberAlgebra::DualNumber<double> &x) noexcept;
 }
 
 // Eigen definition. Has to be defined for each value

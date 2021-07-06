@@ -3,34 +3,70 @@
 //
 
 #include <iostream>
-#include <eigen3/Eigen/Eigen>
 
 #include "DualNumber.h"
-#include "RobotAlgebra.h"
+//#include "RobotAlgebra.h"
+#include "RobotAlgebraTypes.h"
 
-using namespace DualNumberAlgebra;
+#include "math.h"
+
 using namespace RobotAlgebra;
+using DualNumberAlgebra::operator""_s;
 
 template<class T>
 T filter_zero(const T &a, double epsilon = 1e-8) {
     return (a.array().abs() > epsilon).select(a, 0.0);
 }
 
+DualNumber toDeg(const DualNumber &a) {
+    return DualNumber(a.getReal()/M_PI*180.0, a.getDual());
+}
+
+
 int main() {
+    Pluecker a = Pluecker::fromDirection(
+            Vector(0.0, 0.0, 1.0),
+            Vector(0.0, 0.0, 0.0)
+    );
 
-    Pluecker<double> ab = create_pluecker_from_points(
-            Vec3<double>(1.0, 1.0, 0.0),
-            Vec3<double>(2.0, 1.0, 0.0));
+    Pluecker b = Pluecker::fromDirection(
+            Vector(1.0, 0.0, 0.0),
+            Vector(0.0, 0.0, 0.0)
+    );
 
-    DualNumber<double> phi = 180.0_d + 2.0_s;
+    Pluecker c = Pluecker::fromDirection(
+            Vector(0.0, 0.0, 1.0),
+            Vector(0.0, 0.0, 0.0)
+    );
 
-    Mat6<double> d = REGG(ab, phi);
-    Mat4<double> hom = convert_mat6_to_mat4(d);
+    auto from_hom = HomogenousMatrix::from(
+            RotationMatrix(0,0,0),
+            Vector(2,0,4)
+    );
 
-    std::cout << "Adjungierte Displacement: " << std::endl << filter_zero(d) << std::endl << std::endl;
-    std::cout << "Rot:" << std::endl << filter_zero(get_rot(hom)) << std::endl <<std::endl<< "Trans:" << std::endl << filter_zero(get_trans(hom)) << std::endl;
-    std::cout << "Hom:" << std::endl << filter_zero(hom) << std::endl << std::endl;
-    std::cout << "Adjungierte Displacement: " << std::endl << filter_zero(convert_mat4_to_mat6(hom)) << std::endl << std::endl;
+    auto from(AdjungateMatrix::from(from_hom) );
 
-    return 0;
+    auto to_hom = HomogenousMatrix::from(
+            RotationMatrix(0,0,0),
+            Vector(-5,5,8)
+    );
+
+    auto to = AdjungateMatrix::from(to_hom);
+
+    DualNumber phi1, phi2, phi3;
+    solve(to, from, a, b, c, phi1, phi2, phi3, false);
+
+    std::cout <<std::endl <<
+            toDeg(phi1) << std::endl <<
+            toDeg(phi2) << std::endl <<
+            toDeg(phi3) << std::endl << std::endl;
+
+
+    HomogenousMatrix res(HomogenousMatrix::from(
+            AdjungateMatrix(a.transform(phi1).data * b.transform(phi2).data * c.transform(phi3).data)
+    ));
+
+    std::cout << res.data * from_hom.data << std::endl << std::endl;
+    std::cout << filter_zero(to_hom.data) << std::endl << std::endl;
+
 }

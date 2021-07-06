@@ -7,9 +7,9 @@
 
 #include "DualNumber.h"
 
-using namespace DualNumberAlgebra;
-
 namespace RobotAlgebra {
+
+    using namespace DualNumberAlgebra;
 
     template<class T>
     using Mat3 = Eigen::Matrix<T,3,3>;
@@ -45,6 +45,7 @@ namespace RobotAlgebra {
         return m;
     }
 
+
     template<class T>
     Pluecker<T> create_pluecker_from_points(const Vec3<T> &a, const Vec3<T> &b) noexcept {
         Vec3<T> n = b - a;
@@ -54,6 +55,7 @@ namespace RobotAlgebra {
         p << n, m;
         return p;
     }
+
 
     template<class T>
     Mat6<T> create_adjungate(const Mat3<T> & diag, const Mat3<T> & dual) noexcept {
@@ -75,6 +77,7 @@ namespace RobotAlgebra {
                 static_cast<Mat3<T>>(dn.getDual() * i3));
     }
 
+
     template<class T>
     Mat6<T> adjungate_pluecker(const Pluecker<T> & p) noexcept {
         return create_adjungate(
@@ -90,6 +93,7 @@ namespace RobotAlgebra {
         return create_adjungate(R, skewR);
     }
 
+
     template<class T>
     Mat4<T> convert_mat6_to_mat4(const Mat6<T> & adj) noexcept {
         Mat4<T> hom = Mat4<T>::Identity(4,4);
@@ -104,6 +108,7 @@ namespace RobotAlgebra {
         return hom;
     }
 
+
     template<class T>
     Mat3<T> get_rot(const Mat4<T> & hom) noexcept {
         return hom.topLeftCorner(3,3);
@@ -114,6 +119,7 @@ namespace RobotAlgebra {
         return hom.topRightCorner(3,1);
     }
 
+    ////
     template<class T>
     Vec3<DualNumber<T>> get_dualline(const Pluecker<T> & p) noexcept{
         Vec3<DualNumber<T>> l;
