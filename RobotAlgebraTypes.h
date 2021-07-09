@@ -6,7 +6,7 @@
 #define DAK_ROBOTALGEBRATYPES_H
 
 #include <eigen3/Eigen/Eigen>
-#include "DualNumber.h"
+#include "dual_number.h"
 
 namespace RobotAlgebra {
 
@@ -42,7 +42,7 @@ namespace RobotAlgebra {
         Vector v() const noexcept;
         Vector w() const noexcept;
 
-        AdjungateMatrix transform(DualNumberAlgebra::DualNumber<double> angle) const noexcept;
+        AdjungateMatrix transform(DualNumberAlgebra::DualNumber_template<double> angle) const noexcept;
 
         Pluecker align() const noexcept;
         Pluecker normalize() const noexcept;
@@ -98,7 +98,7 @@ namespace RobotAlgebra {
         explicit GenericMatrix6(Eigen::Matrix<double, 6, 6> data) noexcept;
         Eigen::Matrix<double,6,6> data;
         static GenericMatrix6 from(const GenericMatrix3 &real, const GenericMatrix3 &dual) noexcept;
-        static GenericMatrix6 from(const DualNumberAlgebra::DualNumber<double> &dn) noexcept;
+        static GenericMatrix6 from(const DualNumberAlgebra::DualNumber_template<double> &dn) noexcept;
 
         static GenericMatrix6 from(const Pluecker &pl) noexcept;
 

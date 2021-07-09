@@ -4,7 +4,6 @@
 
 #include <iostream>
 
-#include "DualNumber.h"
 //#include "RobotAlgebra.h"
 #include "RobotAlgebraTypes.h"
 

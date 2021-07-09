@@ -5,7 +5,7 @@
 #ifndef DAK_ROBOTALGEBRA_H
 #define DAK_ROBOTALGEBRA_H
 
-#include "DualNumber.h"
+#include "dual_number.h"
 
 namespace RobotAlgebra {
 

@@ -2,7 +2,6 @@
 // Created by sba on 21.09.20.
 //
 
-#include "DualNumber.h"
 #include "RobotAlgebraTypes.h"
 #include "math.h"
 

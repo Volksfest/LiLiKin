@@ -5,7 +5,7 @@
 #ifndef DAK_MATH_H
 #define DAK_MATH_H
 
-using DualNumber = DualNumberAlgebra::DualNumber<double>;
+using DualNumber = DualNumberAlgebra::DualNumber_template<double>;
 using Pluecker = RobotAlgebra::Pluecker;
 using Vector = RobotAlgebra::Vector;
 using AdjungateMatrix = RobotAlgebra::AdjungateMatrix;

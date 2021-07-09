@@ -160,7 +160,7 @@ RobotAlgebra::Pluecker::w() const noexcept {
 
 RobotAlgebra::AdjungateMatrix
 RobotAlgebra::Pluecker::transform(
-        DualNumberAlgebra::DualNumber<double> angle) const noexcept {
+        DualNumberAlgebra::DualNumber_template<double> angle) const noexcept {
 
     GenericMatrix6 orthoterm = GenericMatrix6::from(*this);
     GenericMatrix6 uniterm = - orthoterm * orthoterm; //eq -i^2
@@ -275,7 +275,7 @@ RobotAlgebra::GenericMatrix6::from(
 
 RobotAlgebra::GenericMatrix6
 RobotAlgebra::GenericMatrix6::from(
-        const DualNumberAlgebra::DualNumber<double> &dn) noexcept {
+        const DualNumberAlgebra::DualNumber_template<double> &dn) noexcept {
 
     GenericMatrix3 i3(Eigen::Matrix<double,3,3>::Identity(3,3));
     return RobotAlgebra::GenericMatrix6::from(
