@@ -30,12 +30,3 @@ add_executable(test_dual_number
         test/dual_number_test.cpp)
 target_include_directories(test_dual_number PRIVATE include)
 target_link_libraries(test_dual_number gtest_main)
-
-### OLD STUFF
-
-add_executable(dak_test
-        DualNumber_double.cpp
-        RobotAlgebraTypes.cpp
-        math.cpp
-        main.cpp
-        )
