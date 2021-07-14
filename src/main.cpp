@@ -51,13 +51,12 @@ int main() {
     std::cout << "To Pose: " << std::endl << to_hom << std::endl;
 
     for (auto solution : solutions) {
-
         std::cout << std::endl <<
                   toDeg(solution.phi_1) << std::endl <<
                   toDeg(solution.phi_2) << std::endl <<
-                  toDeg(solution.phi_3) << std::endl << std::endl;
+                  toDeg(solution.phi_3) << std::endl;
 
-        std::cout << "Yields to: " << std::endl << HomogenousMatrix(ccc.forward(solution)) << std::endl;
+        std::cout << std::endl <<
+                  "Yields to: " << std::endl << HomogenousMatrix(ccc.forward(solution)) << std::endl;
     }
-
 }

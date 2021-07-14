@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(dak)
+
+project("Dual Algebra Kinematics" VERSION 0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,10 +24,25 @@ target_include_directories(dak PRIVATE include)
 
 ### Test
 
-add_subdirectory(googletest)
+# TODO check if googletest is pulled
 
-add_executable(test_dual_number
+add_subdirectory(googletest)
+add_executable(do_tests
         src/dual_number.cpp
         test/dual_number_test.cpp)
-target_include_directories(test_dual_number PRIVATE include)
-target_link_libraries(test_dual_number gtest_main)
+target_include_directories(do_tests PRIVATE include)
+target_link_libraries(do_tests gtest_main)
+
+### Docs
+
+# TODO only create docs, if Doxygen is found!
+
+find_package(Doxygen)
+
+set(DOXYGEN_PROJECT_LOGO "icon.svg")
+set(DOXYGEN_EXTRA_PACKAGES "amsmath")
+set(DOXYGEN_GENERATE_TODOLIST "YES")
+doxygen_add_docs(docs
+        ${PROJECT_SOURCE_DIR}/include
+        COMMENT "Generate HTML Docs..."
+        )

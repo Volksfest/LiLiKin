@@ -11,21 +11,51 @@
 #include "types/matrix6.h"
 #include "types/pluecker.h"
 
+/**
+ * \brief The configuration of an CCC mechanism
+ *
+ * The configuration is given by the values of each joint.
+ */
 struct Configuration {
-    DualNumberAlgebra::DualNumber phi_1;
-    DualNumberAlgebra::DualNumber phi_2;
-    DualNumberAlgebra::DualNumber phi_3;
+    DualNumberAlgebra::DualNumber phi_1; //!< Value of the first joint
+    DualNumberAlgebra::DualNumber phi_2; //!< Value of the second joint
+    DualNumberAlgebra::DualNumber phi_3; //!< Value of the third joint
 };
 
+/**
+ * \brief A CCC mechanism defined by three lines and a zero posture frame pointing the endeffector with zero valued joints
+ *
+ */
 struct CCCMechanism {
-    Pluecker l12;
-    Pluecker l23;
-    Pluecker l34;
-    AdjungateMatrix zero_posture;
+    Pluecker l12; //!< Line for the first C joint
+    Pluecker l23; //!< Line for the second C joint
+    Pluecker l34; //!< Line for the third C joint
+    AdjungateMatrix zero_posture; //!< Zero posture frame in 6x6 matrix representation
 
+    /**
+     * \brief Simple constructor for the CCC mechanism
+     * @param l12 First C joint
+     * @param l23 Second C joint
+     * @param l34 Third C joint
+     * @param zero_posture Endeffector pose in zeroed joint values
+     */
     CCCMechanism(const Pluecker &l12, const Pluecker &l23, const Pluecker &l34, const AdjungateMatrix &zero_posture) noexcept;
 
+    /**
+     * \brief Forward kinematics with PoE
+     * @param config The joint configuration to calculate the endeffector pose
+     * @return The endeffector pose
+     */
     AdjungateMatrix forward(const Configuration &config) const noexcept;
+
+    /**
+     * \brief The inverse kinematics
+     *
+     * The solution is not unique thus a list of Configuration as a solution
+     * \except std::logic_error If no solution is possible
+     * @param pose The frame to reach
+     * @return A list with possible configurations
+     */
     std::vector<Configuration> inverse(const AdjungateMatrix &pose) const;
 };
 

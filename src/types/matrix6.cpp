@@ -48,10 +48,11 @@ Matrix6::operator*(const Matrix6 &rhs) const noexcept {
     return Matrix6(this->data * rhs.data);
 }
 
+/*
 Pluecker
 Matrix6::operator*(const Pluecker &rhs) const noexcept {
     return Pluecker(this->data * rhs.data);
-}
+}*/
 
 AdjungateMatrix::AdjungateMatrix(const Mat6 &mat) noexcept : Matrix6(mat) {}
 
@@ -68,11 +69,6 @@ AdjungateMatrix::AdjungateMatrix(const HomogenousMatrix &hom) noexcept
 AdjungateMatrix
 AdjungateMatrix::operator*(const AdjungateMatrix &rhs) const noexcept {
     return AdjungateMatrix(this->data * rhs.data);
-}
-
-Pluecker
-AdjungateMatrix::operator*(const Pluecker &rhs) const noexcept {
-    return Pluecker(this->data * rhs.data);
 }
 
 AdjungateMatrix
@@ -93,4 +89,8 @@ AdjungateMatrix::pxR() const noexcept {
 Vector
 AdjungateMatrix::p() const noexcept {
     return Vector(SkewMatrix(this->pxR() * this->R().inverse())); // multiple type conversions are needed for safe type conversion
+}
+
+Pluecker operator*(const Matrix6 &lhs, const Pluecker &rhs) noexcept {
+    return Pluecker(lhs.data * rhs.data);
 }

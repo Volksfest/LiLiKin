@@ -77,10 +77,9 @@ namespace DualNumberAlgebra {
         return *this;
     }
 
-
     DualNumber
     DualNumber::operator/(const DualNumber &rhs) const {
-        if (this->_real == 0) {
+        if (rhs._real == 0) {
             throw std::logic_error("Cannot divide by (a real part equal to) zero");
         }
         return DualNumber(this->_real / rhs._real,
@@ -89,7 +88,7 @@ namespace DualNumberAlgebra {
 
     DualNumber &
     DualNumber::operator/=(const DualNumber &rhs) {
-        if (this->_real == 0) {
+        if (rhs._real == 0) {
             throw std::logic_error("Cannot divide by (a real part equal to) zero");
         }
         this->_real /= rhs._real;
@@ -226,7 +225,7 @@ namespace DualNumberAlgebra {
     }
 
     bool
-    operator==(const DualNumber lhs, const DualNumber rhs) noexcept {
+    operator==(const DualNumber &lhs, const DualNumber &rhs) noexcept {
         return (lhs.real() == rhs.real()) && (lhs.dual() == rhs.dual());
     }
 
