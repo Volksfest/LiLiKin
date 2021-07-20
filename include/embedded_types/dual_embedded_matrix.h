@@ -16,6 +16,7 @@ class RotationMatrix;
 class Screw;
 
 class DualFrame;
+class DualSkewProduct;
 
 /**
 * \brief A weaker wrapper for a generic 6x6 Matrix
@@ -90,6 +91,7 @@ public:
     friend Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept;
 
     friend DualFrame;
+    friend DualSkewProduct;
 };
 
 

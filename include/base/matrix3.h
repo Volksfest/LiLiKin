@@ -10,6 +10,7 @@
 class Vector;
 class DualEmbeddedMatrix;
 class DualFrame;
+class DualSkewProduct;
 
 /**
  * \brief A weaker wrapper for a generic 3x3 Matrix
@@ -51,6 +52,7 @@ public:
 
     friend DualEmbeddedMatrix;
     friend DualFrame;
+    friend DualSkewProduct;
 
     friend Vector;
 };
