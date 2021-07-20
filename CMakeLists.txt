@@ -6,9 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 ### Project
 
-add_executable(dak
-        src/main.cpp
-
+add_library(dak
         src/ccc.cpp
 
         src/base/dual_number.cpp
@@ -28,16 +26,24 @@ add_executable(dak
         )
 target_include_directories(dak PRIVATE include)
 
+### Example
+add_executable(dak-example
+    example.cpp)
+target_include_directories(dak-example PRIVATE include)
+target_link_libraries(dak-example dak)
+
+
 ### Test
 
 # TODO check if googletest is pulled
 
 add_subdirectory(googletest)
 add_executable(do_tests
-        src/base/dual_number.cpp
-        test/dual_number_test.cpp)
+        test/dual_number_test.cpp
+        test/screws_test.cpp
+        )
 target_include_directories(do_tests PRIVATE include)
-target_link_libraries(do_tests gtest_main)
+target_link_libraries(do_tests gtest_main dak)
 
 ### Docs
 

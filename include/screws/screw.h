@@ -159,11 +159,17 @@ public:
      */
     Line parallel_through_anchor(const PointVector &new_anchor) const noexcept;
 
+
+
     DualNumberAlgebra::DualNumber acos3(const Screw &a, const Screw &b) const noexcept;
 
     virtual bool no_rotation() const noexcept;
 
     friend Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept;
+
+    friend bool operator==(const Screw &lhs, const Screw &rhs);
+
+    friend bool operator!=(const Screw &lhs, const Screw &rhs);
 };
 
 struct Projection{
