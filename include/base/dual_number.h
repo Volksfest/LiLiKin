@@ -14,6 +14,7 @@
 
 #include <stdexcept>
 #include <cmath>
+#include <vector>
 
 /**
  * \brief Everything regarding the dual numbers
@@ -317,6 +318,8 @@ namespace DualNumberAlgebra {
      * @return
      */
     std::ostream &operator<<(std::ostream &stream, DualNumberAlgebra::DualNumber const &d);
+
+    std::vector<DualNumber> solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset);
 }
 
 #include <eigen3/Eigen/Eigen>

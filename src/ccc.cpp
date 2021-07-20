@@ -3,41 +3,35 @@
 //
 
 #include "ccc.h"
-#include "types/matrix6.h"
-#include "dual_number.h"
-
-#include "trigonometry_helper.h"
-
-#include <iostream>
 
 using namespace DualNumberAlgebra;
 
-CCCMechanism::CCCMechanism(const Pluecker &l12, const Pluecker &l23, const Pluecker &l34, const AdjungateMatrix &zero_posture) noexcept
+CCCMechanism::CCCMechanism(const UnitLine &l12, const UnitLine &l23, const UnitLine &l34, const DualFrame &zero_posture) noexcept
     : l12(l12), l23(l23), l34(l34), zero_posture(zero_posture) {}
 
-AdjungateMatrix
+DualFrame
 CCCMechanism::forward(const Configuration &config) const noexcept {
     return
-        this->l12.create_transform(config.phi_1) *
-        this->l23.create_transform(config.phi_2) *
-        this->l34.create_transform(config.phi_3) *
+        DualFrame(DualSkewProduct(this->l12, config.phi_1)) *
+        DualFrame(DualSkewProduct(this->l23, config.phi_2)) *
+        DualFrame(DualSkewProduct(this->l34, config.phi_3)) *
         this->zero_posture;
 }
 
 std::vector<Configuration>
-CCCMechanism::inverse(const AdjungateMatrix &pose) const {
+CCCMechanism::inverse(const DualFrame &pose) const {
 
-    AdjungateMatrix s = pose * this->zero_posture.inverse();
+    auto s = pose * this->zero_posture.inverse();
 
-    Matrix6 crossterm(this->l23);
-    Matrix6 uniterm = - crossterm * crossterm;
-    Matrix6 squareterm = Matrix6(1) - uniterm;
+    DualSkew crossterm(this->l23);
+    DualEmbeddedMatrix uniterm = - crossterm * crossterm;
+    DualEmbeddedMatrix squareterm = DualEmbeddedMatrix(1) - uniterm;
 
     DualNumber a = this->l12 * (uniterm * this->l34);
     DualNumber b = this->l12 * (crossterm * this->l34);
     DualNumber c = this->l12 * ((s - squareterm) * this->l34);
 
-    auto phi2_solutions = solve_trig(a, b, c);
+    auto phi2_solutions = solve_trigonometric_equation(a, b, c);
     bool enable_offset = false;
 
     if (phi2_solutions.empty()) {
@@ -53,18 +47,17 @@ CCCMechanism::inverse(const AdjungateMatrix &pose) const {
     std::vector<Configuration> solutions;
 
     for (auto phi_2 : phi2_solutions) {
-        auto m2 = this->l23.create_transform(phi_2);
+        DualFrame m2(DualSkewProduct(this->l23, phi_2));
 
-        auto phi_1 = acos3(s * this->l34, m2 * this->l34, -this->l12);
-        auto phi_3 = acos3(s.inverse() * this->l12, m2.inverse() * this->l12, this->l34);
+        auto phi_1 = (-this->l12).acos3(s * this->l34, m2 * this->l34);
+        auto phi_3 = this->l34.acos3(s.inverse() * this->l12, m2.inverse() * this->l12);
 
         // TODO change hack
         if (enable_offset) {
-            auto intermediate_line = this->l12.create_transform(phi_1) * m2 * this->l23;
-            auto offset = acos3(
+            auto intermediate_line = DualFrame(DualSkewProduct(this->l12,phi_1)) * m2 * this->l23;
+            auto offset = l34.acos3(
                     intermediate_line,
-                    intermediate_line.parallel_through_anchor(s.p()),
-                    l34);
+                    intermediate_line.parallel_through_anchor(s.p()));
             phi_3 = phi_3 + offset;
         }
 

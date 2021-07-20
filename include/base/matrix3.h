@@ -8,12 +8,8 @@
 #include <eigen3/Eigen/Eigen>
 
 class Vector;
-class RotationMatrix;
-class SkewMatrix;
-
-class Matrix6;
-class AdjungateMatrix;
-class HomogenousMatrix;
+class DualEmbeddedMatrix;
+class DualFrame;
 
 /**
  * \brief A weaker wrapper for a generic 3x3 Matrix
@@ -21,15 +17,15 @@ class HomogenousMatrix;
  *
  */
 class Matrix3 {
-private:
+protected:
     using Mat3 = Eigen::Matrix<double,3,3>;
 
     Eigen::Matrix<double,3,3> data;
 
-    Matrix3() = default;
-    explicit Matrix3(Mat3  data) noexcept;
-
+    explicit Matrix3(const Mat3 &data) noexcept;
 public:
+    Matrix3() = delete;
+
     /**
      * Generic scalar matrix multiplication
      * @param[in] rhs right factor
@@ -53,12 +49,10 @@ public:
      */
     Vector operator*(const Vector &rhs) const noexcept;
 
+    friend DualEmbeddedMatrix;
+    friend DualFrame;
+
     friend Vector;
-    friend RotationMatrix;
-    friend SkewMatrix;
-    friend Matrix6;
-    friend AdjungateMatrix;
-    friend HomogenousMatrix;
 };
 
 /**
@@ -80,7 +74,7 @@ Matrix3 operator*(double lhs, const Matrix3 &rhs) noexcept;
  */
 class RotationMatrix : public Matrix3 {
 private:
-    explicit RotationMatrix(Mat3  data) noexcept;
+    explicit RotationMatrix(const Mat3 &data) noexcept;
 public:
     /**
      * Create a rotation matrix with the z-y-x convention.
@@ -109,9 +103,7 @@ public:
      * @return The inverse rotation
      */
     RotationMatrix inverse() const noexcept;
-
-    friend AdjungateMatrix;
-    friend HomogenousMatrix;
+    friend DualFrame;
 };
 
 /**

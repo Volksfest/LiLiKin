@@ -9,16 +9,22 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(dak
         src/main.cpp
 
-        src/dual_number.cpp
-        src/trigonometry_helper.cpp
         src/ccc.cpp
 
-        src/types/pluecker.cpp
-        src/types/vector.cpp
-        src/types/matrix3.cpp
-        src/types/matrix6.cpp
-        src/types/homogenous.cpp
+        src/base/dual_number.cpp
+        src/base/vector.cpp
+        src/base/matrix3.cpp
 
+        src/screws/screw.cpp
+        src/screws/screw_cos3.cpp
+        src/screws/unit_screw.cpp
+        src/screws/line.cpp
+        src/screws/unit_line.cpp
+
+        src/embedded_types/dual_embedded_matrix.cpp
+        src/embedded_types/dual_frame.cpp
+        src/embedded_types/dual_skew.cpp
+        src/embedded_types/dual_skew_product.cpp
         )
 target_include_directories(dak PRIVATE include)
 
@@ -28,7 +34,7 @@ target_include_directories(dak PRIVATE include)
 
 add_subdirectory(googletest)
 add_executable(do_tests
-        src/dual_number.cpp
+        src/base/dual_number.cpp
         test/dual_number_test.cpp)
 target_include_directories(do_tests PRIVATE include)
 target_link_libraries(do_tests gtest_main)

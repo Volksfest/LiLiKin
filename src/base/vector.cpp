@@ -2,8 +2,8 @@
 // Created by sba on 07.07.21.
 //
 
-#include "types.h"
-#include "types/matrix3.h"
+#include "base/vector.h"
+#include "base/matrix3.h"
 
 Vector::Vector(const Vec3 &data) noexcept {
     this->data = data;
@@ -85,16 +85,39 @@ PointVector::PointVector(const Vector &rhs) noexcept : Vector(rhs) {}
 PointVector::PointVector(double a, double b, double c) noexcept : Vector(a,b,c) {}
 
 DirectionVector::DirectionVector(const Vector &rhs) : Vector(rhs) {
-    if (abs(1.0 - rhs.norm()) > 0.0001) { // TODO epsilon
-        throw std::logic_error("Converting a non unit vector as direction Vector");
+    if (this->is_zero()) {
+        throw std::logic_error("Given vector is the null vector");
     }
 }
 
 DirectionVector::DirectionVector(double a, double b, double c) : Vector(a,b,c) {
+    if (this->is_zero()) {
+        throw std::logic_error("Given vector is the null vector");
+    }
+}
+
+UnitDirectionVector
+DirectionVector::normal() const {
+    return UnitDirectionVector(*this / this->norm());
+}
+
+UnitDirectionVector::UnitDirectionVector(const Vector &rhs) : DirectionVector(rhs) {
     if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
         throw std::logic_error("Given vector is not an unit vector");
     }
 }
+
+UnitDirectionVector::UnitDirectionVector(double a, double b, double c) : DirectionVector(a,b,c) {
+    if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
+        throw std::logic_error("Given vector is not an unit vector");
+    }
+}
+
+UnitDirectionVector
+UnitDirectionVector::normal() const {
+    return *this;
+}
+
 
 MomentVector::MomentVector(const Vector &rhs) noexcept : Vector(rhs) {}
 

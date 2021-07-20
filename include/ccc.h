@@ -7,9 +7,9 @@
 
 #include <vector>
 
-#include "dual_number.h"
-#include "types/matrix6.h"
-#include "types/pluecker.h"
+#include "base/dual_number.h"
+#include "screws/unit_line.h"
+#include "embedded_types/dual_frame.h"
 
 /**
  * \brief The configuration of an CCC mechanism
@@ -27,10 +27,10 @@ struct Configuration {
  *
  */
 struct CCCMechanism {
-    Pluecker l12; //!< Line for the first C joint
-    Pluecker l23; //!< Line for the second C joint
-    Pluecker l34; //!< Line for the third C joint
-    AdjungateMatrix zero_posture; //!< Zero posture frame in 6x6 matrix representation
+    UnitLine l12; //!< Line for the first C joint
+    UnitLine l23; //!< Line for the second C joint
+    UnitLine l34; //!< Line for the third C joint
+    DualFrame zero_posture; //!< Zero posture frame in 6x6 matrix representation
 
     /**
      * \brief Simple constructor for the CCC mechanism
@@ -39,14 +39,14 @@ struct CCCMechanism {
      * @param l34 Third C joint
      * @param zero_posture Endeffector pose in zeroed joint values
      */
-    CCCMechanism(const Pluecker &l12, const Pluecker &l23, const Pluecker &l34, const AdjungateMatrix &zero_posture) noexcept;
+    CCCMechanism(const UnitLine &l12, const UnitLine &l23, const UnitLine &l34, const DualFrame &zero_posture) noexcept;
 
     /**
      * \brief Forward kinematics with PoE
      * @param config The joint configuration to calculate the endeffector pose
      * @return The endeffector pose
      */
-    AdjungateMatrix forward(const Configuration &config) const noexcept;
+    DualFrame forward(const Configuration &config) const noexcept;
 
     /**
      * \brief The inverse kinematics
@@ -56,7 +56,7 @@ struct CCCMechanism {
      * @param pose The frame to reach
      * @return A list with possible configurations
      */
-    std::vector<Configuration> inverse(const AdjungateMatrix &pose) const;
+    std::vector<Configuration> inverse(const DualFrame &pose) const;
 };
 
 #endif //DAK_ADJOINT_TRIGONOMETRY_H
