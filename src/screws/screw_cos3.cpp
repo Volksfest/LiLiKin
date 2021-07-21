@@ -12,12 +12,14 @@ using DualNumberAlgebra::DualNumber;
 
 double
 sgn(double x) {
-    return x > 0.0? 1.0 : -1.0;
+    return x > 0.0 || abs(x) < 0.0000001 ? 1.0 : -1.0;
 }
 
 // generic case
 DualNumber
 acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
+
+    // TODO what about using orthogonals instead of rejections?
 
     auto a_pro = n.project(a);
     UnitLine rejection_a = a_pro.r.normalize().align();
@@ -25,13 +27,20 @@ acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept 
     auto b_pro = n.project(b);
     UnitLine rejection_b = b_pro.r.normalize().align();
 
-    double ornt = sgn(
-            n.n() * cross(a.n(),b.n()) );
+    if (abs(rejection_a.n() * rejection_b.n()) > 0.999999999) {
+        return DualNumber(
+                sgn(rejection_a.n() * rejection_b.n()) > 0 ? 0 : M_PI,
+                acos(rejection_a * b_pro.o.normalize().align()).dual()
+                );
+    } else {
+        double ornt = sgn(
+                n.n() * cross(a.n(), b.n()));
 
-    return acos(rejection_a * rejection_b) * ornt;
-
+        return acos(rejection_a * rejection_b) * ornt;
+    }
 }
 
+//only translation
 DualNumber
 acos3_parallel_lines(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
     auto point_projection_a = n.point_project(a);
@@ -44,16 +53,16 @@ acos3_parallel_lines(const UnitLine &a, const UnitLine &b, const UnitLine &n) no
     return DualNumber(0.0, projection_diff.norm() * ornt);
 }
 
+// only rotation
 DualNumber
 acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-    auto a_pro = n.project(a);
-    auto b_pro = n.project(b);
+    auto a_pro_o = n.project(a).o.normalize().align();
+    auto b_pro_o = n.project(b).o.normalize().align();
 
     double ornt = sgn(
-            n.n() * cross(a_pro.o.n(), b_pro.o.n()) );
-    auto res = acos(a_pro.o * b_pro.o) * ornt;
-
-    return res;
+            n.n() * cross(a_pro_o.n(), b_pro_o.n()) );
+    // real acos not dual acos!
+    return DualNumber(acos(a_pro_o.n() * b_pro_o.n() ) * ornt, 0);
 }
 
 DualNumber

@@ -22,13 +22,25 @@ DualNumberAlgebra::DualNumber DualSkewProduct::angle() const noexcept {
     return this->_angle;
 }
 
+#include <iostream>
 DualSkewProduct DualSkewProduct::operator+(const DualSkewProduct &rhs) const noexcept {
-    auto sum = DualEmbeddedMatrix(this->_angle).data * this->_skew.data + DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
+    //Eigen::Matrix<double,6,6> sum = DualEmbeddedMatrix(this->_angle).data * this->_skew.data + DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
 
+    Eigen::Matrix<double, 6,6> weighted_lhs_raw = DualEmbeddedMatrix(this->_angle).data * this->_skew.data;
+    Eigen::Matrix<double, 6,6> weighted_rhs_raw = DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
+
+    Eigen::Matrix<double, 6,6> sum = weighted_lhs_raw * weighted_rhs_raw - weighted_rhs_raw * weighted_lhs_raw; //Lie Bracket
+
+    // To create type safety, sum will be decomposed into the skews itself and then be rebuild. TODO actually waste of compute time
     auto n_skew = SkewMatrix(Matrix3(sum.topLeftCorner(3,3)));
     auto m_skew = SkewMatrix(Matrix3(sum.bottomLeftCorner(3,3)));
+    // this step is allthough still necessary as DualSkewProduct contains the unit line and thus normalizes the screw
+    // The norm itself is again the dual angle and saved as a second variable
     auto screw = Screw(DirectionVector(Vector(n_skew)), MomentVector(Vector(m_skew)));
-    auto line = screw.align().normalize();
-    auto norm = screw.norm();
-    return {line, norm};
+
+    return {screw};
+}
+
+bool operator==(const DualSkewProduct &lhs, const DualSkewProduct &rhs) noexcept {
+    return lhs._angle == rhs._angle && lhs._skew == rhs._skew;
 }

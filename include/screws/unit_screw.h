@@ -41,7 +41,7 @@ public:
 
     virtual bool no_rotation() const noexcept override;
 
-    Screw rotate(double value);
+    Screw rotate(double value) const noexcept;
 
     friend UnitScrew operator*(const DualFrame &lhs, const UnitScrew &rhs) noexcept;
 };

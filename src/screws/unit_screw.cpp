@@ -38,3 +38,8 @@ bool UnitScrew::no_rotation() const noexcept {
 UnitScrew operator*(const DualFrame &lhs, const UnitScrew &rhs) noexcept {
     return UnitScrew(lhs.data * rhs.data);
 }
+
+Screw UnitScrew::rotate(double value) const noexcept {
+    return Screw(DirectionVector(value * this->n()),
+            MomentVector(this->m() + (value - 1) * cross(cross(this->n(),this->m()), this->n())));
+}

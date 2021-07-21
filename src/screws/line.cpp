@@ -28,3 +28,7 @@ UnitLine Line::normalize() const {
 Line operator*(const DualFrame &lhs, const Line &rhs) noexcept {
     return Line(lhs.data * rhs.data);
 }
+
+Screw Line::translate(double value) const noexcept {
+    return Screw(this->n(), MomentVector(this->m() + this->n() * value / this->n().norm()));
+}

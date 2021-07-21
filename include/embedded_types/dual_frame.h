@@ -27,6 +27,8 @@ public:
      */
     DualFrame inverse() const noexcept;
 
+    DualSkewProduct constructive_line() const noexcept;
+
     /**
      * \brief Retrieve the rotation matrix of the frame
      * @return The rotation matrix
@@ -52,6 +54,8 @@ public:
     friend UnitLine operator*(const DualFrame &lhs, const UnitLine &rhs) noexcept;
 
     friend std::ostream &operator<<(std::ostream &stream, const DualFrame &d);
+
+    friend bool operator==(const DualFrame &lhs, const DualFrame &rhs) noexcept;
 };
 
 

@@ -84,8 +84,8 @@ Projection Screw::project(const Screw &l) const noexcept {
 
         auto n = cross(cross(this->n(), c), this->n());
 
-        op = std::make_unique<Screw>(Line(DirectionVector(n.normal()),
-                 PointVector(anchor_n/n.norm())));
+        op = std::make_unique<Screw>(Line(DirectionVector(n),
+                 PointVector(anchor_n)));
     } else {
         op = std::make_unique<Screw>(adj * l);
     }

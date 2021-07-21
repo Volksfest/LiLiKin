@@ -21,6 +21,11 @@ public:
     DualSkew skew() const noexcept;
     DualNumberAlgebra::DualNumber angle() const noexcept;
 
+    // this does not work as it is.
+    // it was actually just a try in the first place
     DualSkewProduct operator+(const DualSkewProduct &rhs) const noexcept;
+
+    friend bool operator==(const DualSkewProduct &lhs, const DualSkewProduct &rhs) noexcept;
 };
+
 #endif //DUAL_ALGEBRA_KINEMATICS_DUAL_SKEW_PRODUCT_H

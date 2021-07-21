@@ -3,6 +3,7 @@
 //
 
 #include "embedded_types/dual_frame.h"
+#include "screws/line.h"
 
 DualFrame::DualFrame(const DualEmbeddedMatrix &mat) noexcept: DualEmbeddedMatrix(mat) {}
 
@@ -55,4 +56,26 @@ std::ostream &operator<<(std::ostream &stream, const DualFrame &d) {
         stream << "\t" << p(i) << std::endl;
     }
     return stream;
+}
+
+bool operator==(const DualFrame &lhs, const DualFrame &rhs) noexcept {
+    return lhs.data.isApprox(rhs.data);
+}
+
+DualSkewProduct DualFrame::constructive_line() const noexcept {
+    auto diff = *this - this->inverse();
+    auto n_skew = diff.data.topLeftCorner(3,3);
+    auto m_skew = diff.data.bottomLeftCorner(3,3);
+
+    auto R = this->data.topLeftCorner(3,3);
+    auto pxR = this->data.bottomLeftCorner(3,3);
+
+    auto screw = Screw(
+            DirectionVector(Vector(SkewMatrix(Matrix3(n_skew)))),
+            MomentVector(Vector(SkewMatrix(Matrix3(m_skew)))));
+
+    auto angle = acos(0.5 * (DualNumberAlgebra::DualNumber(R.trace(), pxR.trace()) - 1));
+
+    return {screw.align().normalize(), angle};
+
 }

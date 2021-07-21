@@ -53,7 +53,8 @@ SkewMatrix::SkewMatrix(const Vector & vector) noexcept: Matrix3(Mat3::Zero(3,3))
 }
 
 SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {
-    if ( (this->data + this->data.transpose()) != Mat3::Zero(3,3) ) {
+    auto check = (this->data + this->data.transpose()).array().abs();
+    if ( ! (check< 0.0000001).all() ) {
         throw std::logic_error("Matrix is not a skew matrix");
     }
 }
