@@ -1,0 +1,40 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  
+build:
+    stage: build
+    image: volksfest/eigen3:latest
+    tags:
+        - vserver-shared
+    script:
+        - rm -rf html
+        - mkdir -p bin 
+        - cd bin 
+        - cmake ..
+        - make
+    artifacts:
+        paths:
+            - ./bin/do_tests
+            - ./bin/dak-example
+
+test:
+    stage: test
+    image: volksfest/eigen3:latest
+    tags:
+        - vserver-shared
+    script:
+        - ./bin/do_tests
+
+docs:
+    stage: deploy
+    image: volksfest/eigen3:latest
+    tags:
+        - vserver-shared
+    script:
+        - cmake .
+        - make docs
+    artifacts:
+        paths:
+            - html
+    only:
+        - master
