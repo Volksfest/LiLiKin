@@ -3,11 +3,13 @@
 //
 
 #include <memory>
+#include <cmath>
 
 #include "embedded_types/dual_embedded_matrix.h"
 
 #include "screws/screw.h"
 #include "screws/unit_screw.h"
+#include "screws/unit_line.h"
 #include "screws/line.h"
 
 #include "base/vector.h"
@@ -64,7 +66,6 @@ Screw Screw::operator-(const Screw &rhs) const noexcept {
 }
 
 Line Screw::align() const {
-    auto norm = this->n().norm();
     return Line(this->n(), this->get_canonical_anchor()); // TODO could be made faster by directly computing
 }
 
@@ -126,4 +127,24 @@ bool operator==(const Screw &lhs, const Screw &rhs) {
 
 bool operator!=(const Screw &lhs, const Screw &rhs) {
     return ! (lhs == rhs);
+}
+
+DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexcept {
+
+    // The screws needs to be aligned and normalized otherwise the dual inner product gets scaled
+    UnitLine t = this->align().normalize();
+    UnitLine r = rhs.align().normalize();
+
+    auto prod = acos(t * r);
+    // additional check as the translation of parallel lines cannot be expressed as the dual of a dual inner product
+    // this is a degradition due to the sinus of phi being zero
+    if (!std::isfinite(prod.dual())) {
+        return DualNumberAlgebra::DualNumber(
+                // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
+                prod.real(),
+                // as the lines are parallel the canonical anchors should be on the orthogonal plane through zero. their distance is also the distance between the lines.
+                (t.get_canonical_anchor() - r.get_canonical_anchor()).norm());
+    } else {
+        return prod;
+    }
 }

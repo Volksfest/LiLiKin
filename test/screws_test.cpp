@@ -90,14 +90,9 @@ TEST(Screws, Distance) { //NOLINT
             PointVector(0,5,0)
             );
 
-    std::cout << acos(a*b) << std::endl;
-    std::cout << acos(a*bi) << std::endl;
-    std::cout << acos(a*c) << std::endl;
-    std::cout << acos(b*c) << std::endl;
-    std::cout << (a.get_canonical_anchor()-b.get_canonical_anchor()).norm() << std::endl;
-    auto va =  a.get_canonical_anchor();
-    auto vb =  b.get_canonical_anchor();
-    std::cout << (a.get_canonical_anchor()-c.get_canonical_anchor()).norm() << std::endl;
+    EXPECT_NEAR_DN(a.get_distance(b), DualNumber(0, M_SQRT2), 0.000001);
+    EXPECT_NEAR_DN(b.get_distance(bi), DualNumber(M_PI, 0), 0.000001);
+    EXPECT_NEAR_DN(a.get_distance(c), DualNumber(M_PI_2, 4),0.000001);
 }
 
 TEST(Screws, Inverse) { //NOLINT

@@ -159,7 +159,7 @@ public:
      */
     Line parallel_through_anchor(const PointVector &new_anchor) const noexcept;
 
-
+    DualNumberAlgebra::DualNumber get_distance(const Screw &rhs) const noexcept;
 
     DualNumberAlgebra::DualNumber acos3(const Screw &a, const Screw &b) const noexcept;
 
