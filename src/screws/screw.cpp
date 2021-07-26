@@ -73,7 +73,7 @@ UnitScrew Screw::normalize() const {
     return UnitScrew(this->n().normal(), MomentVector(this->m()/ this->n().norm()));
 }
 
-Projection Screw::project(const Screw &l) const noexcept {
+Projection Screw::project(const Screw &l) const {
     DualEmbeddedMatrix adj(
             SkewMatrix(this->n()),
             SkewMatrix(this->m()));
@@ -135,16 +135,27 @@ DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexce
     UnitLine t = this->align().normalize();
     UnitLine r = rhs.align().normalize();
 
-    auto prod = acos(t * r);
+    auto prod = t * r;
+
+    // fix some precission error which results in domain errors
+    // the norm of the dot products of unit vectors cannot be greater than 1
+    if (prod.real() > 1.0) {
+        prod = DualNumberAlgebra::DualNumber(1.0, prod.dual());
+    }
+    if (prod.real() < -1.0) {
+        prod = DualNumberAlgebra::DualNumber(-1.0, prod.dual());
+    }
+    auto angle = acos(prod);
+
     // additional check as the translation of parallel lines cannot be expressed as the dual of a dual inner product
     // this is a degradition due to the sinus of phi being zero
-    if (!std::isfinite(prod.dual())) {
+    if (!std::isfinite(angle.dual())) {
         return DualNumberAlgebra::DualNumber(
                 // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
-                prod.real(),
+                angle.real(),
                 // as the lines are parallel the canonical anchors should be on the orthogonal plane through zero. their distance is also the distance between the lines.
                 (t.get_canonical_anchor() - r.get_canonical_anchor()).norm());
     } else {
-        return prod;
+        return angle;
     }
 }

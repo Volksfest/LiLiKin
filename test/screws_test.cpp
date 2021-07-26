@@ -141,7 +141,6 @@ TEST(Screws, Acos3) { //NOLINT
             PointVector(1,1,1)
             );
 
-    // TODO 180 degrees are not considered acos(180) is undefined Need special treatment for acos3_generic
     auto res = line2.acos3(a,b1);
     EXPECT_NEAR_DN(res, DualNumber(M_PI, sqrt(2)), 0.00001);
 

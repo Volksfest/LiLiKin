@@ -18,26 +18,16 @@ sgn(double x) {
 // generic case
 DualNumber
 acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-
-    // TODO what about using orthogonals instead of rejections?
-
     auto a_pro = n.project(a);
     UnitLine rejection_a = a_pro.r.normalize().align();
 
     auto b_pro = n.project(b);
     UnitLine rejection_b = b_pro.r.normalize().align();
 
-    if (abs(rejection_a.n() * rejection_b.n()) > 0.999999999) {
-        return DualNumber(
-                sgn(rejection_a.n() * rejection_b.n()) > 0 ? 0 : M_PI,
-                acos(rejection_a * b_pro.o.normalize().align()).dual()
-                );
-    } else {
-        double ornt = sgn(
-                n.n() * cross(a.n(), b.n()));
+    double ornt = sgn(
+        n.n() * cross(a.n(), b.n()));
 
-        return acos(rejection_a * rejection_b) * ornt;
-    }
+    return rejection_a.get_distance(rejection_b) * ornt;
 }
 
 //only translation
