@@ -143,7 +143,7 @@ public:
      * @param l Line to decompose
      * @return The decomposition in a decomposition
      */
-    Projection project(const Screw &l) const noexcept;
+    Projection project(const Screw &l) const;
 
     /**
      * \brief Project the anchor of a line to the this line

@@ -46,7 +46,7 @@ operator*(double lhs, const Vector &rhs) noexcept {
 Vector
 Vector::operator/(double rhs) const {
     if (rhs == 0.0) {
-        throw std::logic_error("Division by zero");
+        throw std::domain_error("Division by zero");
     }
     return Vector(this->data / rhs);
 }
@@ -86,13 +86,13 @@ PointVector::PointVector(double a, double b, double c) noexcept : Vector(a,b,c) 
 
 DirectionVector::DirectionVector(const Vector &rhs) : Vector(rhs) {
     if (this->is_zero()) {
-        throw std::logic_error("Given vector is the null vector");
+        throw std::invalid_argument("Given vector is the null vector");
     }
 }
 
 DirectionVector::DirectionVector(double a, double b, double c) : Vector(a,b,c) {
     if (this->is_zero()) {
-        throw std::logic_error("Given vector is the null vector");
+        throw std::invalid_argument("Given vector is the null vector");
     }
 }
 
@@ -103,13 +103,13 @@ DirectionVector::normal() const {
 
 UnitDirectionVector::UnitDirectionVector(const Vector &rhs) : DirectionVector(rhs) {
     if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
-        throw std::logic_error("Given vector is not an unit vector");
+        throw std::invalid_argument("Given vector is not an unit vector");
     }
 }
 
 UnitDirectionVector::UnitDirectionVector(double a, double b, double c) : DirectionVector(a,b,c) {
     if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
-        throw std::logic_error("Given vector is not an unit vector");
+        throw std::invalid_argument("Given vector is not an unit vector");
     }
 }
 

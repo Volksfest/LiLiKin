@@ -46,13 +46,19 @@ acos3_parallel_lines(const UnitLine &a, const UnitLine &b, const UnitLine &n) no
 // only rotation
 DualNumber
 acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-    auto a_pro_o = n.project(a).o.normalize().align();
-    auto b_pro_o = n.project(b).o.normalize().align();
+    // in this special case, any line could be identitiy to n
+    // in this case, just do nothing (no rotation, no translation
+    try {
+        auto a_pro_o = n.project(a).o.normalize().align();
+        auto b_pro_o = n.project(b).o.normalize().align();
 
-    double ornt = sgn(
-            n.n() * cross(a_pro_o.n(), b_pro_o.n()) );
-    // real acos not dual acos!
-    return DualNumber(acos(a_pro_o.n() * b_pro_o.n() ) * ornt, 0);
+        double ornt = sgn(
+                n.n() * cross(a_pro_o.n(), b_pro_o.n()) );
+        // real acos not dual acos!
+        return DualNumber(acos(a_pro_o.n() * b_pro_o.n() ) * ornt, 0);
+    } catch(const std::invalid_argument &e) { //actually std::logic_error
+        return DualNumber(); // 0+0_s
+    }
 }
 
 DualNumber
