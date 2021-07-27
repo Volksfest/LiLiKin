@@ -41,6 +41,7 @@ add_subdirectory(googletest)
 add_executable(do_tests
         test/dual_number_test.cpp
         test/screws_test.cpp
+        test/ccc_test.cpp
         )
 target_include_directories(do_tests PRIVATE include)
 target_link_libraries(do_tests gtest_main dak)
