@@ -161,6 +161,34 @@ TEST(Screws, Acos3) { //NOLINT
 
 }
 
+TEST(Screws, Intersection) {
+    UnitLine line_a(
+            UnitDirectionVector(0,1,0),
+            PointVector(-1,0,0)
+    );
+
+    UnitLine line_b(
+            DirectionVector(1,1,0).normal(),
+            PointVector(0,0,0)
+    );
+
+    UnitLine line_bi(
+            DirectionVector(1,1,1).normal(),
+            PointVector(0,0,0)
+    );
+
+    PointVector intersection = line_a.intersect(line_b);
+
+    ASSERT_EQ(intersection.get(), PointVector(-1,-1,0).get());
+
+    try {
+        PointVector not_existent = line_a.intersect(line_bi);
+        FAIL() << not_existent.get() << " cannot be the intersection of skew lines!" << std::endl;
+    } catch (std::domain_error &err) {
+        EXPECT_EQ(std::string(err.what()), "skew lines cannot intersect");
+    }
+}
+
 TEST(Screws, LieAlgebra) { //NOLINT
     UnitLine line_a(
             UnitDirectionVector(0,0,1),

@@ -129,6 +129,48 @@ bool operator!=(const Screw &lhs, const Screw &rhs) {
     return ! (lhs == rhs);
 }
 
+PointVector
+Screw::intersect(const Screw &l) const {
+    //use normalized screws as we don't want to have pitches and scaling by direction vector
+    UnitLine a = this->align().normalize();
+    UnitLine b = l.align().normalize();
+
+    // check if lines are coplanar and non-parallel
+    if(cross(a.n(), b.n()).is_zero()) {
+        throw std::domain_error("parallel lines cannot intersect");
+    }
+    if ( !(abs(a.m() * b.n() + a.n() * b.m()) < 0.000001)) {
+        throw std::domain_error("skew lines cannot intersect");
+    }
+
+    if ( a.m().is_zero()) {
+        if(b.m().is_zero()) {
+            // if both moments are zero, both lines are going through zero. The intersection is quite obvious, isn't it?
+            return PointVector(0,0,0);
+        }
+        // if a's moment is zero, just swap the lines to ensure a's moment is the non-zero one
+        std::swap(a,b);
+    }
+    auto c = cross(a.m(), b.m());
+    Vector m;
+
+    // if the moments are parallel or b's moment is zero use the moment of the orthogonal of the lines.
+    // This one goes also through the intersection point is then guaranteed to be orthogonal.
+    if (b.m().is_zero() || c.is_zero()) {
+        // last one could be enhanced by checking if b.m is zero
+        m = cross(a.m(), b.n()) + cross(a.n(), b.m());
+    } else {
+        m = b.m();
+    }
+
+    // Denominator can't be zero as n can't be zero and m is checked not to be zero
+    // In theory taken from wikipedia but also self derived especially with origin lines
+    // With lots of algebraic transformations this results from the fact, that any point on line is
+    // orthogonal to the moment. Thus the intersection needs to be orthogonal to both moments and is thus the scaled cross product of both moments
+    // the scaling can be derived from the algebraic substituion of the moments
+    return PointVector(cross(m, a.m()) / (m * a.n()));
+}
+
 DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexcept {
 
     // The screws needs to be aligned and normalized otherwise the dual inner product gets scaled
