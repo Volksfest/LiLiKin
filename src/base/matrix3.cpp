@@ -24,7 +24,12 @@ Matrix3::operator*(const Matrix3 &rhs) const noexcept {
 
 Vector
 Matrix3::operator*(const Vector &rhs) const noexcept {
-    return Vector(this->data * rhs.data);
+    return Vector(this->data * rhs.get());
+}
+
+const Matrix3::Mat3 &
+Matrix3::get() const noexcept {
+    return data;
 }
 
 RotationMatrix::RotationMatrix(double z, double y, double x) noexcept:
@@ -46,10 +51,11 @@ RotationMatrix::inverse() const noexcept {
     return RotationMatrix(this->data.transpose());
 }
 
-SkewMatrix::SkewMatrix(const Vector & vector) noexcept: Matrix3(Mat3::Zero(3,3)) {
-    this->data << 0, -vector.data(2, 0), vector.data(1, 0),
-            vector.data(2, 0), 0, -vector.data(0, 0),
-            -vector.data(1, 0), vector.data(0, 0), 0;
+SkewMatrix::SkewMatrix(const Vector & _vector) noexcept: Matrix3(Mat3::Zero(3,3)) {
+    auto vector = _vector.get();
+    this->data << 0, -vector(2, 0), vector(1, 0),
+            vector(2, 0), 0, -vector(0, 0),
+            -vector(1, 0), vector(0, 0), 0;
 }
 
 SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {

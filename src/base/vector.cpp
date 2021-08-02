@@ -14,7 +14,7 @@ Vector::Vector(double a, double b, double c) noexcept {
 }
 
 Vector::Vector(const SkewMatrix &skew) noexcept {
-    this->data << skew.data(2,1), skew.data(0,2), skew.data(1,0);
+    this->data << skew.get()(2,1), skew.get()(0,2), skew.get()(1,0);
 }
 
 Vector &
@@ -78,6 +78,11 @@ Vector::is_zero() const noexcept {
 
 Vector cross(const Vector &lhs, const Vector &rhs) noexcept {
     return lhs.cross(rhs);
+}
+
+const Vector::Vec3 &
+Vector::get() const noexcept {
+    return data;
 }
 
 PointVector::PointVector(const Vector &rhs) noexcept : Vector(rhs) {}

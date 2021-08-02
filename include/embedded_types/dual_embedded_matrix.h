@@ -22,10 +22,10 @@ class DualSkewProduct;
 * \brief A weaker wrapper for a generic 6x6 Matrix
 */
 class DualEmbeddedMatrix {
-protected:
+public:
     using Mat6 = Eigen::Matrix<double, 6, 6>;
-
-    Eigen::Matrix<double,6,6> data;
+protected:
+    Mat6 data;
 
     explicit DualEmbeddedMatrix(const Mat6 &data) noexcept;
 public:
@@ -88,10 +88,9 @@ public:
      */
     DualEmbeddedMatrix operator*(const DualEmbeddedMatrix &rhs) const noexcept;
 
-    friend Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept;
+    const Mat6 & get() const noexcept;
 
-    friend DualFrame;
-    friend DualSkewProduct;
+    friend Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept;
 };
 
 

@@ -18,7 +18,6 @@ public:
 
     explicit DualSkew(const UnitLine &line) noexcept;
 
-    friend DualSkewProduct;
     friend bool operator==(const DualSkew &lhs, const DualSkew &rhs);
 };
 

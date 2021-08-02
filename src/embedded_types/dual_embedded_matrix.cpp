@@ -12,10 +12,10 @@
 DualEmbeddedMatrix::DualEmbeddedMatrix(const Mat6 &data) noexcept: data(data) {}
 
 DualEmbeddedMatrix::DualEmbeddedMatrix(const Matrix3 &real, const Matrix3 &dual) noexcept {
-    this->data.topLeftCorner(3, 3)     = real.data;
+    this->data.topLeftCorner(3, 3)     = real.get();
     this->data.topRightCorner(3, 3)     = Eigen::Matrix<double,3,3>::Zero(3, 3);
-    this->data.bottomLeftCorner(3, 3)     = dual.data;
-    this->data.bottomRightCorner(3, 3)     = real.data;
+    this->data.bottomLeftCorner(3, 3)     = dual.get();
+    this->data.bottomRightCorner(3, 3)     = real.get();
 }
 
 DualEmbeddedMatrix::DualEmbeddedMatrix(const DualNumberAlgebra::DualNumber &dn) noexcept
@@ -37,4 +37,9 @@ DualEmbeddedMatrix DualEmbeddedMatrix::operator-(const DualEmbeddedMatrix &rhs) 
 
 DualEmbeddedMatrix DualEmbeddedMatrix::operator*(const DualEmbeddedMatrix &rhs) const noexcept {
     return DualEmbeddedMatrix(this->data * rhs.data);
+}
+
+const DualEmbeddedMatrix::Mat6 &
+DualEmbeddedMatrix::get() const noexcept {
+    return data;
 }

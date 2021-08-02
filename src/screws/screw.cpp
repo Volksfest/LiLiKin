@@ -19,7 +19,7 @@
 Screw::Screw(const Vec6 &data) noexcept : data(data) {}
 
 Screw::Screw(const DirectionVector &n, const MomentVector &m) noexcept : data(Vec6::Zero(6,1)) {
-    this->data << n.data, m.data;
+    this->data << n.get(), m.get();
 }
 
 DirectionVector Screw::n() const noexcept {

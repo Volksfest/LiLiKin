@@ -20,7 +20,7 @@ DualFrame::DualFrame(const DualSkewProduct &argument) noexcept: DualEmbeddedMatr
 
     this->data = (DualEmbeddedMatrix(cos(angle)) * uniterm +
                            DualEmbeddedMatrix(sin(angle)) * orthoterm +
-                           nullterm).data;
+                           nullterm).get();
 }
 
 DualFrame DualFrame::operator*(const DualFrame &rhs) const noexcept {
@@ -64,8 +64,8 @@ bool operator==(const DualFrame &lhs, const DualFrame &rhs) noexcept {
 
 DualSkewProduct DualFrame::constructive_line() const noexcept {
     auto diff = *this - this->inverse();
-    auto n_skew = diff.data.topLeftCorner(3,3);
-    auto m_skew = diff.data.bottomLeftCorner(3,3);
+    auto n_skew = diff.get().topLeftCorner(3,3);
+    auto m_skew = diff.get().bottomLeftCorner(3,3);
 
     auto R = this->data.topLeftCorner(3,3);
     auto pxR = this->data.bottomLeftCorner(3,3);

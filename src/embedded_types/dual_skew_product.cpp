@@ -26,8 +26,8 @@ DualNumberAlgebra::DualNumber DualSkewProduct::angle() const noexcept {
 DualSkewProduct DualSkewProduct::operator+(const DualSkewProduct &rhs) const noexcept {
     //Eigen::Matrix<double,6,6> sum = DualEmbeddedMatrix(this->_angle).data * this->_skew.data + DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
 
-    Eigen::Matrix<double, 6,6> weighted_lhs_raw = DualEmbeddedMatrix(this->_angle).data * this->_skew.data;
-    Eigen::Matrix<double, 6,6> weighted_rhs_raw = DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
+    Eigen::Matrix<double, 6,6> weighted_lhs_raw = DualEmbeddedMatrix(this->_angle).get() * this->_skew.get();
+    Eigen::Matrix<double, 6,6> weighted_rhs_raw = DualEmbeddedMatrix(rhs._angle).get() * rhs._skew.get();
 
     Eigen::Matrix<double, 6,6> sum = weighted_lhs_raw * weighted_rhs_raw - weighted_rhs_raw * weighted_lhs_raw; //Lie Bracket
 

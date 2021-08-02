@@ -18,13 +18,13 @@ class DualSkewProduct;
  *
  */
 class Matrix3 {
-protected:
-    using Mat3 = Eigen::Matrix<double,3,3>;
-
-    Eigen::Matrix<double,3,3> data;
-
-    explicit Matrix3(const Mat3 &data) noexcept;
 public:
+    using Mat3 = Eigen::Matrix<double,3,3>;
+protected:
+    Eigen::Matrix<double,3,3> data;
+public:
+    explicit Matrix3(const Mat3 &data) noexcept;
+
     Matrix3() = delete;
 
     /**
@@ -50,11 +50,7 @@ public:
      */
     Vector operator*(const Vector &rhs) const noexcept;
 
-    friend DualEmbeddedMatrix;
-    friend DualFrame;
-    friend DualSkewProduct;
-
-    friend Vector;
+    const Mat3 & get() const noexcept;
 };
 
 /**

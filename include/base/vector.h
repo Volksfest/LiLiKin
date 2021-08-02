@@ -17,13 +17,13 @@ class Screw;
  * Just defined to have semantic data types.
  */
 class Vector {
-protected:
-    using Vec3 = Eigen::Matrix<double,3,1>;
-
-    Vec3 data;
-
-    explicit Vector(const Vec3 &data) noexcept;
 public:
+    using Vec3 = Eigen::Matrix<double,3,1>;
+protected:
+    Vec3 data;
+public:
+    explicit Vector(const Vec3 &data) noexcept;
+
     /**
      * \brief Default constructor for zero vector
      */
@@ -141,9 +141,7 @@ public:
      */
     bool is_zero() const noexcept;
 
-    friend Matrix3;
-    friend SkewMatrix;
-    friend Screw;
+    const Vec3 & get() const noexcept;
 };
 
 /**
