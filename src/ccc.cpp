@@ -18,6 +18,15 @@ CCCMechanism::forward(const Configuration &config) const noexcept {
         this->zero_posture;
 }
 
+std::tuple<DualFrame, UnitLine, UnitLine>
+CCCMechanism::forward_verbose(const Configuration &config) const {
+    auto fk1 = DualFrame(DualSkewProduct(this->l12, config.phi_1));
+    auto fk12 = fk1 * DualFrame(DualSkewProduct(this->l23, config.phi_2));
+    auto fk123 = fk12 * DualFrame(DualSkewProduct(this->l34, config.phi_3));
+
+    return std::make_tuple(fk123 * this->zero_posture, fk1 * this->l23, fk12 * l34);
+}
+
 std::vector<Configuration>
 CCCMechanism::inverse(const DualFrame &pose) const {
 

@@ -6,6 +6,7 @@
 #define DAK_ADJOINT_TRIGONOMETRY_H
 
 #include <vector>
+#include <tuple>
 
 #include "base/dual_number.h"
 #include "screws/unit_line.h"
@@ -47,6 +48,17 @@ struct CCCMechanism {
      * @return The endeffector pose
      */
     DualFrame forward(const Configuration &config) const noexcept;
+
+    /**
+     * \brief Verbose Forward kinematics with PoE
+     *
+     * This one also returns the intermediate line position yielding from the transformations of the lines before.
+     * The first line is omitted as its parameter will not change.
+     *
+     * @param config The joint configuration to calculate the endeffector pose
+     * @return A tuple containing endeffector pose an the intermediate lines from the FK
+     */
+    std::tuple<DualFrame, UnitLine, UnitLine> forward_verbose(const Configuration &config) const;
 
     /**
      * \brief The inverse kinematics
