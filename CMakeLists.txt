@@ -28,7 +28,7 @@ target_include_directories(dak PRIVATE include)
 
 ### Example
 add_executable(dak-example
-    example.cpp)
+    applications/example.cpp)
 target_include_directories(dak-example PRIVATE include)
 target_link_libraries(dak-example dak)
 
