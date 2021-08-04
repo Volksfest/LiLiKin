@@ -210,11 +210,14 @@ double Screw::get_distance(const PointVector &rhs) const noexcept {
     return (t.m() - cross(rhs,t.n())).norm();
 }
 
-Line Screw::orthogonal_through_anchor(const PointVector &anchor) const noexcept {
+Line Screw::orthogonal_through_anchor(const PointVector &anchor) const {
     UnitLine l = this->align().normalize();
-    DirectionVector n(
-        anchor - cross(l.n(), l.m()) - l.n() * (l.n() * anchor)
-    );
-
-    return Line(n, anchor);
+    try {
+        DirectionVector n(
+            anchor - cross(l.n(), l.m()) - l.n() * (l.n() * anchor)
+        );
+        return Line(n, anchor);
+    } catch( std::domain_error &e) {
+        throw std::domain_error("Cannot create a orthogonal through anchor if the anchor is on the line");
+    }
 }
