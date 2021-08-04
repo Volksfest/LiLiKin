@@ -159,7 +159,7 @@ public:
      */
     Line parallel_through_anchor(const PointVector &new_anchor) const noexcept;
 
-    Line orthogonal_through_anchor(const PointVector &anchor) const noexcept;
+    Line orthogonal_through_anchor(const PointVector &anchor) const;
 
     PointVector intersect(const Screw &l) const;
 
