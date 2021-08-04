@@ -195,9 +195,26 @@ DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexce
         return DualNumberAlgebra::DualNumber(
                 // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
                 angle.real(),
-                // as the lines are parallel the canonical anchors should be on the orthogonal plane through zero. their distance is also the distance between the lines.
-                (t.get_canonical_anchor() - r.get_canonical_anchor()).norm());
+                // as the lines are parallel the moments give the distance
+                (t.m() - r.m()).norm());
     } else {
         return angle;
     }
+}
+
+double Screw::get_distance(const PointVector &rhs) const noexcept {
+    UnitLine t = this->align().normalize();
+
+    // The same as above but shortened. You can construct a parallel line through the point.
+    // The rotation is zero thus it is ignored and only the dual part as a real number is given back.
+    return (t.m() - cross(rhs,t.n())).norm();
+}
+
+Line Screw::orthogonal_through_anchor(const PointVector &anchor) const noexcept {
+    UnitLine l = this->align().normalize();
+    DirectionVector n(
+        anchor - cross(l.n(), l.m()) - l.n() * (l.n() * anchor)
+    );
+
+    return Line(n, anchor);
 }
