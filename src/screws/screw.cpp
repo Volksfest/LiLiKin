@@ -191,12 +191,12 @@ DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexce
 
     // additional check as the translation of parallel lines cannot be expressed as the dual of a dual inner product
     // this is a degradition due to the sinus of phi being zero
-    if (!std::isfinite(angle.dual())) {
+    if (abs(prod.real()) > 0.999999 ) {
         return DualNumberAlgebra::DualNumber(
                 // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
                 angle.real(),
                 // as the lines are parallel the moments give the distance
-                (t.m() - r.m()).norm());
+                prod.real() > 0 ? (t.m() - r.m()).norm() : (t.m() + r.m()).norm() );
     } else {
         return angle;
     }
