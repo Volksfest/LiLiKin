@@ -85,6 +85,11 @@ Vector::get() const noexcept {
     return data;
 }
 
+bool
+Vector::operator==(const Vector &rhs) const noexcept {
+    return this->data.isApprox(rhs.data);
+}
+
 PointVector::PointVector(const Vector &rhs) noexcept : Vector(rhs) {}
 
 PointVector::PointVector(double a, double b, double c) noexcept : Vector(a,b,c) {}

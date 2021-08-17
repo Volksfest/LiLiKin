@@ -95,6 +95,21 @@ TEST(Screws, Distance) { //NOLINT
     EXPECT_NEAR_DN(a.get_distance(c), DualNumber(M_PI_2, 4),0.000001);
 }
 
+TEST(Screws, Projection) {
+    UnitLine l(
+            DirectionVector(1,1,0).normal(),
+            PointVector(0,0,0)
+            );
+
+    PointVector a(0,0,0);
+    PointVector b(1,1,1);
+    PointVector c(1,0,0);
+
+    EXPECT_EQ(l.point_project(a), a);
+    EXPECT_EQ(l.point_project(b), PointVector(1,1,0));
+    EXPECT_EQ(l.point_project(c), PointVector(0.5,0.5,0));
+}
+
 TEST(Screws, Inverse) { //NOLINT
     UnitLine a(
             UnitDirectionVector(0,0,1),

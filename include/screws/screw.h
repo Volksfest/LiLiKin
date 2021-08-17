@@ -152,6 +152,8 @@ public:
      */
     PointVector point_project(const Screw &l) const noexcept;
 
+    PointVector point_project(const PointVector &p) const noexcept;
+
     /**
      * \brief Create a translated line going through the new anchor
      * @param new_anchor The new anchor

@@ -142,6 +142,8 @@ public:
     bool is_zero() const noexcept;
 
     const Vec3 & get() const noexcept;
+
+    bool operator==(const Vector &rhs) const noexcept;
 };
 
 /**

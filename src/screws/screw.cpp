@@ -221,3 +221,9 @@ Line Screw::orthogonal_through_anchor(const PointVector &anchor) const {
         throw std::domain_error("Cannot create a orthogonal through anchor if the anchor is on the line");
     }
 }
+
+PointVector Screw::point_project(const PointVector &p) const noexcept {
+    UnitLine l = this->align().normalize();
+
+    return PointVector(this->n() * p * this->n() + this->n().cross(this->m()));
+}
