@@ -18,6 +18,8 @@ public:
 
     explicit DualSkew(const UnitLine &line) noexcept;
 
+    UnitScrew screw() const noexcept;
+
     friend bool operator==(const DualSkew &lhs, const DualSkew &rhs);
 };
 
