@@ -101,19 +101,9 @@ TEST(DualNumberAlgebra, Exception) { //NOLINT
 
     EXPECT_NEAR_DN(any, any.inverse().inverse(), 0.01);
     EXPECT_NEAR_DN(zero, any * (zero / any), 0.01);
-    try {
-        auto not_existent = zero.inverse();
-        FAIL() << not_existent << " is not the inverse of " << zero << "!" << std::endl;
-    } catch (std::logic_error &err) {
-        EXPECT_EQ(std::string(err.what()), "Cannot invert (a dual number with real part equals to) zero");
-    }
 
-    try {
-        auto not_existent = any / zero;
-        FAIL() << not_existent << " after division should not be existing!" << std::endl;
-    } catch (std::logic_error &err) {
-        EXPECT_EQ(std::string(err.what()), "Cannot divide by (a real part equal to) zero");
-    }
+    EXPECT_THROW(zero.inverse(), std::logic_error);
+    EXPECT_THROW(any/zero, std::logic_error);
 }
 
 TEST(DualNumberAlgebra, Random) { // NOLINT

@@ -46,9 +46,9 @@ TEST(Screws, Creation) { // NOLINT
             PointVector(0,0,42)
             );
 
-    ASSERT_EQ(a,b);
-    ASSERT_EQ(c,d);
-    ASSERT_NE(a,c);
+    EXPECT_EQ(a,b);
+    EXPECT_EQ(c,d);
+    EXPECT_NE(a,c);
 }
 
 TEST(Screws, Transformation) { // NOLINT
@@ -64,9 +64,9 @@ TEST(Screws, Transformation) { // NOLINT
     auto line_to_screw = line.translate(1.5);
     auto unit_screw_to_screw = unit_screw.rotate(M_PI_4);
 
-    ASSERT_EQ(screw, line_to_screw);
-    ASSERT_EQ(screw, unit_screw_to_screw);
-    ASSERT_EQ(line_to_screw, unit_screw_to_screw);
+    EXPECT_EQ(screw, line_to_screw);
+    EXPECT_EQ(screw, unit_screw_to_screw);
+    EXPECT_EQ(line_to_screw, unit_screw_to_screw);
 }
 
 TEST(Screws, Distance) { //NOLINT
@@ -107,8 +107,10 @@ TEST(Screws, Inverse) { //NOLINT
     auto frame = DualFrame(skew);
     auto skew_invert = frame.constructive_line();
     auto frame2 = DualFrame(skew_invert);
-    ASSERT_EQ(frame, frame2);
 
+    EXPECT_EQ(frame, frame2);
+    EXPECT_EQ(skew_invert.skew().screw(), a);
+    EXPECT_NEAR_DN(skew_invert.angle(), transform, 0.00001);
 }
 
 TEST(Screws, Acos3) { //NOLINT
@@ -179,14 +181,9 @@ TEST(Screws, Intersection) {
 
     PointVector intersection = line_a.intersect(line_b);
 
-    ASSERT_EQ(intersection.get(), PointVector(-1,-1,0).get());
+    EXPECT_EQ(intersection.get(), PointVector(-1,-1,0).get());
 
-    try {
-        PointVector not_existent = line_a.intersect(line_bi);
-        FAIL() << not_existent.get() << " cannot be the intersection of skew lines!" << std::endl;
-    } catch (std::domain_error &err) {
-        EXPECT_EQ(std::string(err.what()), "skew lines cannot intersect");
-    }
+    EXPECT_THROW(line_a.intersect(line_bi), std::domain_error);
 }
 
 TEST(Screws, LieAlgebra) { //NOLINT
@@ -217,9 +214,9 @@ TEST(Screws, LieAlgebra) { //NOLINT
     auto frame_by_line = a_by_line * b_by_line;
 
 
-    ASSERT_EQ(a_by_line, a_by_screw);
-    ASSERT_EQ(b_by_line, b_by_screw);
-    ASSERT_EQ(a_by_line * b_by_line, a_by_screw * b_by_screw);
+    EXPECT_EQ(a_by_line, a_by_screw);
+    EXPECT_EQ(b_by_line, b_by_screw);
+    EXPECT_EQ(a_by_line * b_by_line, a_by_screw * b_by_screw);
 
     //auto sum = skew_a_by_line + skew_b_by_line;
     //auto frame_by_sum = DualFrame(sum);
