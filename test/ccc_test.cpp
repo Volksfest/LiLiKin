@@ -51,16 +51,15 @@ TEST(Mechanism, SU_Fixed_Frames) { // NOLINT
 
     CCCMechanism m(a,b,c,zp);
 
-    std::vector<std::pair<DualFrame,int>> frames = {
-            std::make_pair(DualFrame(RotationMatrix(0,0,0), PointVector(0,0,0)), 2)
+    std::vector<DualFrame> frames = {
+            DualFrame(RotationMatrix(0,0,0), PointVector(0,0,0))
     };
 
-    for (const auto &[frame,size] : frames) {
+    for (const auto &frame : frames) {
         auto configs = m.inverse(frame);
-        ASSERT_EQ(configs.size(), size);
         for (const auto &config : configs) {
             auto fk = m.forward(config);
-            ASSERT_EQ(fk, frame);
+            EXPECT_EQ(fk, frame);
         }
     }
 }

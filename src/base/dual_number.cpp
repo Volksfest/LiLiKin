@@ -3,6 +3,7 @@
 //
 
 #include "base/dual_number.h"
+#include <iostream>
 
 namespace DualNumberAlgebra {
 
@@ -206,35 +207,28 @@ namespace DualNumberAlgebra {
 
     std::vector<DualNumber>
     solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset) {
-
         DualNumber dd = cos_factor * cos_factor +
                         sin_factor * sin_factor -
                         offset * offset;
-        DualNumber rad;
 
-        if(dd.real() <= 0) {
-            // TODO epsilon
-            if ( dd.real() == 0.0) {
-                return {};
-            } else {
-                throw std::logic_error("No solution possible");
+        if(abs(dd.real()) > 0.000000001) {
+            if (dd.real() < 0) {
+                throw std::domain_error("No solution possible");
             }
-        } else {
-            DualNumber d = DualNumberAlgebra::sqrt(dd);
-            rad = atan2(d, offset);
         }
 
         DualNumber pre = atan2(sin_factor, cos_factor);
-        std::vector<DualNumber> solutions;
 
-        if (rad.is_zero()) {
-            solutions.push_back(pre);
+        // TODO epsilon
+        if(dd.real() < 0.000000001) {
+            // there is some problems with calculation d = sqrt(dd) if dd has a zero real part
+            // but luckily d is not necessary if the real part is zero
+            return {pre};
         } else {
-            solutions.push_back(pre + rad);
-            solutions.push_back(pre - rad);
+            DualNumber d = DualNumberAlgebra::sqrt(dd);
+            DualNumber rad = atan2(d, offset);
+            return {pre + rad, pre - rad};
         }
-
-        return solutions;
     }
 
     DualNumber
