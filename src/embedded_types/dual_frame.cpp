@@ -59,7 +59,15 @@ std::ostream &operator<<(std::ostream &stream, const DualFrame &d) {
 }
 
 bool operator==(const DualFrame &lhs, const DualFrame &rhs) noexcept {
-    return lhs.data.isApprox(rhs.data);
+    auto check_R = (lhs.R().get() - rhs.R().get()).array().abs();
+    if ( ! (check_R< 0.0000001).all() ) {
+        return false;
+    }
+    auto check_pxR = (lhs.pxR().get() - rhs.pxR().get()).array().abs();
+    if ( ! (check_pxR< 0.0000001).all() ) {
+        return false;
+    }
+    return true;
 }
 
 DualSkewProduct DualFrame::constructive_line() const noexcept {

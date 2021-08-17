@@ -122,7 +122,7 @@ Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept {
 }
 
 bool operator==(const Screw &lhs, const Screw &rhs) {
-    return lhs.data == rhs.data && lhs.no_rotation() == rhs.no_rotation();
+    return lhs.data.isApprox(rhs.data) && lhs.no_rotation() == rhs.no_rotation();
 }
 
 bool operator!=(const Screw &lhs, const Screw &rhs) {
