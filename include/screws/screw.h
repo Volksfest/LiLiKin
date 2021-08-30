@@ -163,6 +163,8 @@ public:
 
     Line orthogonal_through_anchor(const PointVector &anchor) const;
 
+    PointVector orthogonal_plane_projection(const PointVector &plane_anchor, const PointVector &point) const noexcept;
+
     PointVector intersect(const Screw &l) const;
 
     double get_distance(const PointVector &rhs) const noexcept;

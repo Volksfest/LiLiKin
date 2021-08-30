@@ -227,3 +227,9 @@ PointVector Screw::point_project(const PointVector &p) const noexcept {
 
     return PointVector(this->n() * p * this->n() + this->n().cross(this->m()));
 }
+
+PointVector Screw::orthogonal_plane_projection(const PointVector &plane_anchor, const PointVector &point) const noexcept {
+    auto diff = (this->point_project(point) - this->point_project(plane_anchor));
+    double sign = (this->n() * diff) > 0 ? 1.0 : -1.0;
+    return PointVector(point - diff.norm() * sign * this->n());
+}

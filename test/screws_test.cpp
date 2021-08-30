@@ -104,10 +104,12 @@ TEST(Screws, Projection) {
     PointVector a(0,0,0);
     PointVector b(1,1,1);
     PointVector c(1,0,0);
+    PointVector d(1,0,0);
 
     EXPECT_EQ(l.point_project(a), a);
     EXPECT_EQ(l.point_project(b), PointVector(1,1,0));
     EXPECT_EQ(l.point_project(c), PointVector(0.5,0.5,0));
+    EXPECT_EQ(l.orthogonal_plane_projection(PointVector(0,0,0), d), PointVector(0.5, -0.5, 0));
 }
 
 TEST(Screws, Inverse) { //NOLINT
