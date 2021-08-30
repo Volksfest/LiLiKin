@@ -210,6 +210,40 @@ double Screw::get_distance(const PointVector &rhs) const noexcept {
     return (t.m() - cross(rhs,t.n())).norm();
 }
 
+Parallelity Screw::is_parallel(const Screw &l) const noexcept {
+    auto distance = this->get_distance(l);
+
+    double eps = 0.0000000001; // TODO global
+
+    bool shared_point = false;
+
+    if (abs(distance.dual()) < eps) {
+        shared_point = true;
+    }
+
+    if (distance.real() < eps) {
+        if (shared_point) {
+            return Parallelity::COINCIDE;
+        } else {
+            return Parallelity::PARALLEL;
+        }
+    }
+
+    if (abs(distance.real()-M_PI) < eps) {
+        if (shared_point) {
+            return Parallelity::ANTI_COINCIDE;
+        } else {
+            return Parallelity::ANTI_PARALLEL;
+        }
+    }
+
+    if (shared_point) {
+        return Parallelity::INTERSECT;
+    } else {
+        return Parallelity::SKEW;
+    }
+}
+
 Line Screw::orthogonal_through_anchor(const PointVector &anchor) const {
     UnitLine l = this->align().normalize();
     try {

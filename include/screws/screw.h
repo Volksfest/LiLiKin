@@ -23,6 +23,15 @@ namespace DualNumberAlgebra{
     class DualNumber;
 }
 
+enum Parallelity{
+    SKEW,
+    INTERSECT,
+    PARALLEL,
+    ANTI_PARALLEL,
+    COINCIDE,
+    ANTI_COINCIDE
+};
+
 /**
  * \brief The representation of a screw
  *
@@ -168,6 +177,8 @@ public:
     PointVector intersect(const Screw &l) const;
 
     double get_distance(const PointVector &rhs) const noexcept;
+
+    Parallelity is_parallel(const Screw &l) const noexcept;
 
     DualNumberAlgebra::DualNumber get_distance(const Screw &rhs) const noexcept;
 
