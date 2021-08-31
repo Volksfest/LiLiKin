@@ -64,7 +64,7 @@ struct CCCMechanism {
      * \brief The inverse kinematics
      *
      * The solution is not unique thus a list of Configuration as a solution
-     * \except std::logic_error If no solution is possible
+     * \exception std::logic_error If no solution is possible
      * @param pose The frame to reach
      * @return A list with possible configurations
      */

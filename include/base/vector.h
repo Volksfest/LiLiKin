@@ -97,7 +97,7 @@ public:
      *
      * This is also a linear scaling of a vector.
      *
-     * \except std::logic_error If the right-hand-side is zero
+     * \exception std::logic_error If the right-hand-side is zero
      *
      * @param rhs Scaling factor as an inverse
      * @return The scaled vector
@@ -129,7 +129,7 @@ public:
     /**
      * \brief Cacluate the normalized vector
      *
-     * \except std::logic_error If the norm is zero
+     * \exception std::logic_error If the norm is zero
      *
      * @return The normalized vector
      */
@@ -199,14 +199,14 @@ class DirectionVector : public Vector {
 public:
     /**
      * \brief Conversion constructor from a Vector
-     * \except std::logic_error If the vector is not an unit vector
+     * \exception std::logic_error If the vector is not an unit vector
      * @param rhs Vector to treat as a direction vector
      */
     explicit DirectionVector(const Vector &rhs);
 
     /**
      * \brief Create a direction vector directly from its elements
-     * \except std::logoic_error If the vector is not an unit vector
+     * \exception std::logoic_error If the vector is not an unit vector
      * @param a First element
      * @param b Second element
      * @param c Third element

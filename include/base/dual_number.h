@@ -119,7 +119,7 @@ namespace DualNumberAlgebra {
 
         /**
          * \brief Divide two dual numbers
-         * \except std::locig_error If divided by zero real part
+         * \exception std::locig_error If divided by zero real part
          * @param rhs
          * @return
          */
@@ -148,7 +148,7 @@ namespace DualNumberAlgebra {
 
         /**
          * \brief Divide a dual number to this
-         * \except std::logic_error If divided by real part zero
+         * \exception std::logic_error If divided by real part zero
          * @param rhs
          * @return
          */
@@ -163,7 +163,7 @@ namespace DualNumberAlgebra {
 
         /**
          * \brief Invert dual number
-         * \except std::logic_error If real part is zero
+         * \exception std::logic_error If real part is zero
          * @return
          */
         DualNumber inverse() const;
@@ -281,7 +281,7 @@ namespace DualNumberAlgebra {
     DualNumber operator-(double  lhs, DualNumber rhs)  noexcept;
     /**
      * \brief Commutative symmetry for double
-     * \except std::logic_error If real part of right-hand-side is zero
+     * \exception std::logic_error If real part of right-hand-side is zero
      * \see DualNumber::operator/
      * @param lhs
      * @param rhs
