@@ -58,11 +58,15 @@ endif()
 find_package(Doxygen QUIET)
 
 if(${DOXYGEN_FOUND})
-    set(DOXYGEN_PROJECT_LOGO "icon.svg")
+    set(DOXYGEN_PROJECT_LOGO "doc/icon.svg")
     set(DOXYGEN_EXTRA_PACKAGES "amsmath")
     set(DOXYGEN_GENERATE_TODOLIST "YES")
+    set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
+    set(DOXYGEN_IMAGE_PATH ${PROJECT_SOURCE_DIR})
+    set(DOXYGEN_SHOW_FILES "NO")
     doxygen_add_docs(docs
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/README.md
         COMMENT "Generate HTML Docs..."
         )
     message(STATUS "Doxygen found. Docs can be created with:")

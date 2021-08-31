@@ -1,0 +1,30 @@
+@startuml
+:User Application: << Application >> as app
+left to right direction
+rectangle DAK {
+    (Create CCC Mechanism) as CCCC
+    (Perform Line Geometry Operations) as G
+    (Handle CCC Mechanisms) as CCC
+
+    (Inverse Kinematics) as IK
+    (Forward Kinematics) as FK
+    (Dual Number Algebra) as DA
+}
+
+
+CCC <-- app
+app -> G
+app --> DA
+
+CCC <.. FK : extends
+CCC <.. IK : extends
+
+FK ..> G : include
+IK ..> G : include
+CCCC <. CCC : include
+
+CCCC ..> G : include
+DA <. G : include
+
+
+@enduml
