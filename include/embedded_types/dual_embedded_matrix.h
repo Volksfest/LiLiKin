@@ -19,27 +19,40 @@ class DualFrame;
 class DualSkewProduct;
 
 /**
-* \brief A weaker wrapper for a generic 6x6 Matrix
-*/
+ * \brief A wrapper for an embedded 6x6 Matrix
+ *
+ * This type represents a dual number matrix as following:
+ *  \f$
+      \hat{E} = \begin{pmatrix}
+       R & 0\\
+       D & R
+      \end{pmatrix}\f$
+ * with \f$ E = R + \epsilon D \quad E \in \mathbb{D}^{3x3} \quad R,D \in \mathbb{R}^{3x3}\f$
+ */
 class DualEmbeddedMatrix {
 public:
+    /**
+     * \brief Typedef for the Eigen Column Vector as 3x1 matrix
+     */
     using Mat6 = Eigen::Matrix<double, 6, 6>;
 protected:
+    /**
+     * \brief Internal data storage as Eigen type
+     */
     Mat6 data;
 
+    /**
+     * \brief Protected constructor from Eigen type
+     * Protected because the constructor does not have any type checks and an embedded matrix has some constraints.
+     * See detailed type description
+     * @param data Raw data in Eigen type
+     */
     explicit DualEmbeddedMatrix(const Mat6 &data) noexcept;
 public:
     /**
      * \brief Embed a dual representing 3x3 matrix to an other real representing 3x3 matrix within a 6x6 matrix
      *
-     * This is done by using the upper left and lower right for the real part and the bottom left for the embedded dual part.
-     * The upper right is zero.
-     *
-     *  \f$
-      \begin{pmatrix}
-       R & 0\\
-       D & R
-      \end{pmatrix}\f$
+     * See detailed type description
      *
      * @param real The real matrix
      * @param dual The dual matrix
@@ -50,7 +63,7 @@ public:
      * \brief Represent a dual number as a 6x6 matrix
      *
      * This is done by by creating identity 3x3 matrices scaled by the real or dual part.
-     * Then embed the dual part scaled identity into the real part scaled identity.
+     * Then embed the identities
      *
      *  \f$
       \begin{pmatrix}
@@ -88,8 +101,21 @@ public:
      */
     DualEmbeddedMatrix operator*(const DualEmbeddedMatrix &rhs) const noexcept;
 
+    /**
+     * \brief Return the corresponding Eigen data type (READ-ONLY)
+     * @return The Eigen type of the matrix
+     */
     const Mat6 & get() const noexcept;
 
+    /**
+     * \brief Generic Matrix-Vector product in context of embedded matrix and screws
+     *
+     * This is a generic Matrix-Vector without much semantics.
+     *
+     * @param lhs The left-hand-side matrix
+     * @param rhs The right-hand-side vector
+     * @return Resulting product screw
+     */
     friend Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept;
 };
 

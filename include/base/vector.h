@@ -18,10 +18,20 @@ class Screw;
  */
 class Vector {
 public:
+    /**
+     * Typedef for the Eigen Column Vector as 3x1 matrix
+     */
     using Vec3 = Eigen::Matrix<double,3,1>;
 protected:
+    /**
+     * Internal data storage as Eigen type
+     */
     Vec3 data;
 public:
+    /**
+     * \brief Create the Vector by a Eigen column vector
+     * @param data Eigen type
+     */
     explicit Vector(const Vec3 &data) noexcept;
 
     /**
@@ -141,8 +151,18 @@ public:
      */
     bool is_zero() const noexcept;
 
+    /**
+     * \brief Return the corresponding Eigen data type (READ-ONLY)
+     * @return The Eigen type of the vector
+     */
     const Vec3 & get() const noexcept;
 
+    /**
+     * \brief Comparison of Vectors
+     * \todo Implement a global epsilon
+     * @param rhs right-hand-side
+     * @return True if equal
+     */
     bool operator==(const Vector &rhs) const noexcept;
 };
 
@@ -192,36 +212,63 @@ class UnitDirectionVector;
 
 /**
  * \brief Semantic vector for a direction
- *
- * The norm of this vector has to be one, thus direction vectors are always unit vectors
  */
 class DirectionVector : public Vector {
 public:
     /**
      * \brief Conversion constructor from a Vector
-     * \exception std::logic_error If the vector is not an unit vector
+     * \exception std::logic_error If the vector is a null vector
      * @param rhs Vector to treat as a direction vector
      */
     explicit DirectionVector(const Vector &rhs);
 
     /**
      * \brief Create a direction vector directly from its elements
-     * \exception std::logoic_error If the vector is not an unit vector
+     * \exception std::logic_error If the vector is a null vector
      * @param a First element
      * @param b Second element
      * @param c Third element
      */
     DirectionVector(double a, double b, double c);
 
+    /**
+     * \brief Return the normalized version of the DirectionVector
+     * This one hides the parent method to change the return type
+     * @return Normalized DirectionVector
+     */
     UnitDirectionVector normal() const;
 };
 
+/**
+ * \brief Semantic vector for a unit direction
+ *
+ * The norm of this vector has to be one
+ */
 class UnitDirectionVector: public DirectionVector {
 public:
+    /**
+     * \brief Conversion constructor from a Vector
+     * \exception std::logic_error If the vector is not an unit vector
+     * @param rhs Vector to treat as a direction vector
+     */
     explicit UnitDirectionVector(const Vector &rhs);
 
+    /**
+     * \brief Create a direction vector directly from its elements
+     * \exception std::logic_error If the vector is not a unit vector
+     * @param a First element
+     * @param b Second element
+     * @param c Third element
+     */
     UnitDirectionVector(double a, double b, double c);
 
+    /**
+     * \brief Return the normalized vector
+     *
+     * In this case overloaded to do nothing
+     *
+     * @return The same vector
+     */
     UnitDirectionVector normal() const;
 };
 

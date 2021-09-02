@@ -307,7 +307,18 @@ namespace DualNumberAlgebra {
      * Like (3 + 5_s) for DualNumber(3,5)
      */
     namespace literals {
+        /**
+         * \brief A double will be immediately called as double
+         * @param dual A double as dual part
+         * @return Pure dual number
+         */
         DualNumber operator "" _s(long double dual) noexcept;
+
+        /**
+         * \brief A long will be converted to a double
+         * @param dual A long as dual part
+         * @return Pure dual number
+         */
         DualNumber operator "" _s(unsigned long long dual) noexcept;
     }
 
@@ -319,32 +330,82 @@ namespace DualNumberAlgebra {
      */
     std::ostream &operator<<(std::ostream &stream, DualNumberAlgebra::DualNumber const &d);
 
+    /**
+     * \brief Solver for a dualized trigonometric equation
+     *
+     * The trigonometric equation here is described as:
+     *
+     * \f$
+       a \cos(\varphi) + b \sin(\varphi) = c
+       \f$
+     *
+     * @param cos_factor The factor before the cos term (a)
+     * @param sin_factor The factor before the sin term (b)
+     * @param offset The value of the sum (c)
+     * @return A container with all found solutions
+     */
     std::vector<DualNumber> solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset);
 }
 
 #include <eigen3/Eigen/Eigen>
 
-// Eigen definition. Has to be defined for each value
+/**
+ * \brief Eigen namespace for injecting the dual number trait
+ */
 namespace Eigen {
     /**
-     * \brief Eigen3 Description for the DualNumber
+     * \brief Eigen3 number traid for the DualNumber
      */
     template<>
     struct NumTraits<DualNumberAlgebra::DualNumber> : NumTraits<double>
     {
+        /**
+         * \brief Defining the real part as a double
+         */
         typedef double Real;
-        typedef double NonInteger;
-        typedef double Nested;
 
+        /**
+         * \brief Defining the dual part as a double
+         */
+        typedef double NonInteger;
+
+        /**
+         * \brief Define epsilon
+         * @return epsilon
+         */
         static inline Real epsilon() { return 1e-8; }
 
+        /**
+         * \brief Additional type informations
+         */
         enum {
+            /**
+             * \brief Dual numbers are complex as like complex number
+             */
             IsComplex = 1,
+            /**
+             * \brief Non-integers as we use doubles
+             */
             IsInteger = 0,
+            /**
+             * \brief Dual numbers are signed
+             */
             IsSigned = 1,
+            /**
+             * \todo Maybe change?
+             */
             RequireInitialization = 1,
+            /**
+             * \brief Fix read
+             */
             ReadCost = 1,
+            /**
+             * \brief Two additions
+             */
             AddCost = 2,
+            /**
+             * \brief One addition and three multiplications
+             */
             MulCost = 4
         };
     };

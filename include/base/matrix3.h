@@ -13,31 +13,45 @@ class DualFrame;
 class DualSkewProduct;
 
 /**
- * \brief A weaker wrapper for a generic 3x3 Matrix
- *
+ * \brief A wrapper for a generic 3x3 Matrix
  *
  */
 class Matrix3 {
 public:
+    /**
+     * Typedef for the Eigen 3x3 matrix
+     */
     using Mat3 = Eigen::Matrix<double,3,3>;
 protected:
+    /**
+     * Internal data as Eigen type
+     */
     Eigen::Matrix<double,3,3> data;
 public:
+    /**
+     * \brief Create the Matrix by a Eigen matrix
+     * @param data Eigen type
+     */
     explicit Matrix3(const Mat3 &data) noexcept;
 
+    /**
+     * \brief Delete the default constructor
+     * Good question why.
+     * \todo enable it again for a zero matrix?
+     */
     Matrix3() = delete;
 
     /**
      * Generic scalar matrix multiplication
-     * @param[in] rhs right factor
+     * @param rhs right factor
      * @return Scaled matrix
      */
     Matrix3 operator*(double rhs) const noexcept;
 
     /**
      * Generic matrix multiplication
-     * @param[in] rhs right factor
-     * @return Productmatrix
+     * @param rhs right factor
+     * @return Product matrix
      */
     Matrix3 operator*(const Matrix3 &rhs) const noexcept;
 
@@ -45,11 +59,15 @@ public:
      * Generic matrix-vector-multiplication
      *
      * Seeing the matrix as a linear map this maps the vector to another vector.
-     * @param[in] rhs Input vector
+     * @param rhs Input vector
      * @return Mapped vector
      */
     Vector operator*(const Vector &rhs) const noexcept;
 
+    /**
+     * \brief Return the corresponding Eigen data type (READ-ONLY)
+     * @return The Eigen type of the matrix
+     */
     const Mat3 & get() const noexcept;
 };
 
@@ -68,14 +86,21 @@ Matrix3 operator*(double lhs, const Matrix3 &rhs) noexcept;
  * \brief Orthonormal matrix representing rotations
  *
  * Right now only z-y-x convention is implemented to generate the matrix.
- * More needs to be done.
+ * \todo create more?
  */
 class RotationMatrix : public Matrix3 {
 private:
+    /**
+     * \brief Protected constructor with raw Eigen type
+     *
+     * It is protected to enforce a high level user to use the other constructor to guarantee orthogonality
+     *
+     * @param data Data in Eigen type
+     */
     explicit RotationMatrix(const Mat3 &data) noexcept;
 public:
     /**
-     * Create a rotation matrix with the z-y-x convention.
+     * \brief Create a rotation matrix with the z-y-x convention.
      *
      * This is equivalent to Yaw(z) - Pitch(y) - Roll(x)
      * @param z Yaw angle
@@ -85,7 +110,7 @@ public:
     RotationMatrix(double z, double y, double x) noexcept;
 
     /**
-     * Matrix-Matrix multiplication within rotation matrices.
+     * \brief Matrix-Matrix multiplication within rotation matrices.
      *
      * The set of ortho normal matrices are a non commutative group within multiplication.
      * Thus the product is also a rotation matrix
@@ -95,12 +120,17 @@ public:
     RotationMatrix operator*(const RotationMatrix &rhs) const noexcept;
 
     /**
-     * The inverse rotation.
+     * \brief The inverse rotation.
      *
      * As the multiplication is a group, the inverse exists and is also within the rotation matrices.
+     * Actually, it is easy to calculate as it is just the transpose
      * @return The inverse rotation
      */
     RotationMatrix inverse() const noexcept;
+
+    /**
+     * \brief A friend so that the DualFrame can create a RotationMatrix with Eigen types
+     */
     friend DualFrame;
 };
 

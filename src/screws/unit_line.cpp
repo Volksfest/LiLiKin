@@ -14,7 +14,7 @@ UnitLine::UnitLine(const Vec6 &data) noexcept: UnitScrew(data) {}
 
 UnitLine::UnitLine(const UnitDirectionVector &n, const PointVector &a) noexcept : UnitScrew(n, MomentVector(a.cross(n))) {}
 
-UnitLine::UnitLine(const PointVector &a, const PointVector &b) noexcept : UnitLine(DirectionVector(b-a).normal(), a){}
+UnitLine::UnitLine(const PointVector &a, const PointVector &b) : UnitLine(DirectionVector(b-a).normal(), a){}
 
 UnitLine UnitLine::align() const {
     return *this;

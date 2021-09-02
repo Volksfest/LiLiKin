@@ -61,7 +61,10 @@ Screw Screw::operator-() const noexcept {
     return Screw(-this->data);
 }
 
-Screw Screw::operator-(const Screw &rhs) const noexcept {
+Screw Screw::operator-(const Screw &rhs) const {
+    if (this->n() == rhs.n()) {
+        throw std::domain_error("Resulting direction would be zero");
+    }
     return Screw(this->data - rhs.data);
 }
 

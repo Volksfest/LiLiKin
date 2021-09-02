@@ -59,7 +59,7 @@ find_package(Doxygen QUIET)
 
 if(${DOXYGEN_FOUND})
     set(DOXYGEN_PROJECT_LOGO "doc/icon.svg")
-    set(DOXYGEN_EXTRA_PACKAGES "amsmath")
+    set(DOXYGEN_EXTRA_PACKAGES amsmath amssymb)
     set(DOXYGEN_GENERATE_TODOLIST "YES")
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
     set(DOXYGEN_IMAGE_PATH ${PROJECT_SOURCE_DIR})

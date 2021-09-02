@@ -11,7 +11,7 @@ Line::Line(const Vec6 &data) noexcept: Screw(data) {}
 
 Line::Line(const DirectionVector &n, const PointVector &a) noexcept : Screw(n, MomentVector(a.cross(n))) {}
 
-Line::Line(const PointVector &a, const PointVector &b) noexcept : Screw(DirectionVector(b-a), MomentVector(a.cross(b))) {}
+Line::Line(const PointVector &a, const PointVector &b) : Screw(DirectionVector(b-a), MomentVector(a.cross(b))) {}
 
 Line Line::align() const {
     return *this;
