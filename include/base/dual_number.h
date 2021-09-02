@@ -342,7 +342,7 @@ namespace DualNumberAlgebra {
      * @param cos_factor The factor before the cos term (a)
      * @param sin_factor The factor before the sin term (b)
      * @param offset The value of the sum (c)
-     * @return A container with all found solutions
+     * @return A container with all found solutions for \f$\varphi\f$
      */
     std::vector<DualNumber> solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset);
 }

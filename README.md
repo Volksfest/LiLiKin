@@ -13,7 +13,7 @@ A CCC mechanism consists of three cylindrical (C) joints.
 A cylindrical joint has two degree of freedoms
   as it can translate and rotate around the cylinder main axis,
   which is considered as the joint axis.
-The joint axis can mathematically described as a line, hence Line Kinematics,
+The joint axis can be mathematically described as a line, hence Line Kinematics,
   where points are actuated on the surface of a cylinder around the line.
 Lines can also be transformed by other lines.
 
@@ -56,7 +56,7 @@ The lines could also be described as a dual 3 vector with the dual part being th
 
 The heart of the library are the operations, which are given by the Pluecker lines.
 Ironically, some operations are not well documented in the community.
-Thus, some of them are formulated on the way.
+Thus, some of them are formulated while implementing this library.
 
 ### Dual Trigonometric Equation
 
@@ -65,9 +65,11 @@ There are some problems, e.g the Rodriguez-Formula, which can be described with 
 a cos(phi) + b sin(phi) = c
 
 a, b and c are given parameters and the task would be to find phi.
-This yields to a equivalent quadratic equation with at most two solutions, 
+This yields to an equivalent quadratic equation with at most two solutions, 
   which can be retrieved algebraically via half-tangens substitutions
   or geometrically.
+  
+See DualNumberAlgebra::solve_trigonometric_equation()
 
 ### Acos3
 
@@ -77,8 +79,12 @@ It is used to find phi in:
 
 line_b = exp(phi * line_ref) * line_a
 
+See Screw::acos3()
+
 ### Rodriguez Formula
 
-Another important operation is the Rodriguez-Formula for lines to actually compute:
+Another important operation is the Generalized Rodriguez-Formula for lines to actually compute:
 
 exp(phi * line)
+
+See DualFrame::DualFrame(const DualSkewProduct &argument)
