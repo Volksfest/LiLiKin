@@ -76,12 +76,14 @@ UnitScrew Screw::normalize() const {
     return UnitScrew(this->n().normal(), MomentVector(this->m()/ this->n().norm()));
 }
 
+#include <iostream>
+
 Projection Screw::project(const Screw &l) const {
     DualEmbeddedMatrix adj(
             SkewMatrix(this->n()),
             SkewMatrix(this->m()));
 
-    std::unique_ptr<Screw> op;
+    std::unique_ptr<Screw> op(nullptr);
     if (abs(this->n() * l.n()) > 0.9999) {
         auto anchor_n = this->get_canonical_anchor();
         auto c = anchor_n - l.get_canonical_anchor();
@@ -93,12 +95,14 @@ Projection Screw::project(const Screw &l) const {
     } else {
         op = std::make_unique<Screw>(adj * l);
     }
-
     auto o = *op;
     auto r = -adj * o;
-    auto p = l - r;
-
-    return {p,r,o};
+    try {
+        auto p = l - r;
+        return {p,r,o};
+    } catch(const std::domain_error &) {
+        return {*this,r,o};
+    }
 }
 
 PointVector Screw::point_project(const Screw &l) const noexcept {
