@@ -26,7 +26,7 @@ public:
 
 // Make class a Singleton
 private:
-    Compare() {}
+    Compare() = default;
 public:
     static Compare & instance(){
         static Compare instance;
