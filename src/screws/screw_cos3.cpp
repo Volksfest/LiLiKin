@@ -8,6 +8,8 @@
 #include "base/dual_number.h"
 #include "base/vector.h"
 
+#include "util/precision.h"
+
 using DualNumberAlgebra::DualNumber;
 
 double
@@ -30,7 +32,7 @@ acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept 
     // if a and b are nearly parallel, the sign is hard to compute with the cross product
     // thus calculate the difference of the intersection which should be aligned to the normals direction
     // otherwise it is negative
-    if( abs(dot_prod) < 0.00001) {
+    if( Compare::is_zero(dot_prod) ) {
         ornt = sgn ( (n.intersect(rejection_b) - n.intersect(rejection_a)) * n.n() );
     }
     return rejection_a.get_distance(rejection_b) * ornt;
@@ -84,9 +86,9 @@ Screw::acos3(const Screw &a, const Screw &b) const noexcept {
     UnitLine b_l = b.normalize().align();
     UnitLine n_l = this->normalize().align();
 
-    bool ab_parallel = abs(a_l.n() * b_l.n()) > 0.9999;
-    bool an_parallel = abs(a_l.n() * n_l.n()) > 0.9999;
-    bool bn_parallel = abs(b_l.n() * n_l.n()) > 0.9999;
+    bool ab_parallel = Compare::is_equal(abs(a_l.n() * b_l.n()), 1.0);
+    bool an_parallel = Compare::is_equal(abs(a_l.n() * n_l.n()), 1.0);
+    bool bn_parallel = Compare::is_equal(abs(b_l.n() * n_l.n()), 1.0);
 
     // Check for "Generic case" - everthing is skewed
     if (!ab_parallel && !an_parallel && !bn_parallel) {

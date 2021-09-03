@@ -5,6 +5,8 @@
 #include "embedded_types/dual_frame.h"
 #include "screws/line.h"
 
+#include "util/precision.h"
+
 DualFrame::DualFrame(const DualEmbeddedMatrix &mat) noexcept: DualEmbeddedMatrix(mat) {}
 
 DualFrame::DualFrame(const Mat6 &mat) noexcept: DualEmbeddedMatrix(mat) {}
@@ -60,11 +62,11 @@ std::ostream &operator<<(std::ostream &stream, const DualFrame &d) {
 
 bool operator==(const DualFrame &lhs, const DualFrame &rhs) noexcept {
     auto check_R = (lhs.R().get() - rhs.R().get()).array().abs();
-    if ( ! (check_R< 0.0000001).all() ) {
+    if ( ! (check_R< Compare::instance().get_precision()).all() ) {
         return false;
     }
     auto check_pxR = (lhs.pxR().get() - rhs.pxR().get()).array().abs();
-    if ( ! (check_pxR< 0.0000001).all() ) {
+    if ( ! (check_pxR< Compare::instance().get_precision()).all() ) {
         return false;
     }
     return true;
@@ -85,5 +87,4 @@ DualSkewProduct DualFrame::constructive_line() const noexcept {
     auto angle = acos(0.5 * (DualNumberAlgebra::DualNumber(R.trace(), pxR.trace()) - 1));
 
     return {screw.align().normalize(), angle};
-
 }

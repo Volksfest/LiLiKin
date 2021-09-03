@@ -6,6 +6,8 @@
 #include "screws/screw.h"
 #include "base/vector.h"
 
+#include "util/precision.h"
+
 DualSkew::DualSkew(const SkewMatrix &real, const SkewMatrix &dual) noexcept: DualEmbeddedMatrix(real, dual) {}
 
 DualSkew::DualSkew(const UnitLine &line) noexcept: DualSkew(SkewMatrix(line.n()), SkewMatrix(line.m())) {}
@@ -31,5 +33,5 @@ DualSkew::screw() const noexcept {
 }
 
 bool operator==(const DualSkew &lhs, const DualSkew &rhs) {
-    return lhs.data.isApprox(rhs.data);
+    return lhs.data.isApprox(rhs.data, Compare::instance().get_precision());
 }

@@ -4,6 +4,7 @@
 
 #include "base/dual_number.h"
 #include <iostream>
+#include "util/precision.h"
 
 namespace DualNumberAlgebra {
 
@@ -133,7 +134,7 @@ namespace DualNumberAlgebra {
 
     bool
     DualNumber::is_zero() const noexcept {
-        return this->_real == 0 && this->_dual == 0; //TODO epsilon
+        return Compare::is_zero(this->_real) && Compare::is_zero(this->_dual);
     }
 
     DualNumber
@@ -211,7 +212,7 @@ namespace DualNumberAlgebra {
                         sin_factor * sin_factor -
                         offset * offset;
 
-        if(abs(dd.real()) > 0.000000001) {
+        if (!Compare::is_zero(dd.real())) {
             if (dd.real() < 0) {
                 throw std::domain_error("No solution possible");
             }
@@ -219,8 +220,7 @@ namespace DualNumberAlgebra {
 
         DualNumber pre = atan2(sin_factor, cos_factor);
 
-        // TODO epsilon
-        if(dd.real() < 0.000000001) {
+        if(Compare::is_zero(dd.real())) {
             // there is some problems with calculation d = sqrt(dd) if dd has a zero real part
             // but luckily d is not necessary if the real part is zero
             return {pre};

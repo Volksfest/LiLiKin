@@ -5,6 +5,8 @@
 #include "base/matrix3.h"
 #include "base/vector.h"
 
+#include "util/precision.h"
+
 Matrix3::Matrix3(const Mat3  &data) noexcept: data(data) {}
 
 Matrix3
@@ -60,7 +62,7 @@ SkewMatrix::SkewMatrix(const Vector & _vector) noexcept: Matrix3(Mat3::Zero(3,3)
 
 SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {
     auto check = (this->data + this->data.transpose()).array().abs();
-    if ( ! (check< 0.0000001).all() ) {
+    if ( ! (check< Compare::instance().get_precision()).all() ) {
         throw std::logic_error("Matrix is not a skew matrix");
     }
 }

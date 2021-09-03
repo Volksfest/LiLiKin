@@ -5,6 +5,8 @@
 #include "base/vector.h"
 #include "base/matrix3.h"
 
+#include "util/precision.h"
+
 Vector::Vector(const Vec3 &data) noexcept {
     this->data = data;
 }
@@ -73,7 +75,7 @@ Vector::normal() const {
 
 bool
 Vector::is_zero() const noexcept {
-    return this->norm() < 0.00001;
+    return Compare::is_zero(this->norm());
 }
 
 Vector cross(const Vector &lhs, const Vector &rhs) noexcept {
@@ -87,7 +89,7 @@ Vector::get() const noexcept {
 
 bool
 Vector::operator==(const Vector &rhs) const noexcept {
-    return this->data.isApprox(rhs.data);
+    return this->data.isApprox(rhs.data, Compare::instance().get_precision());
 }
 
 PointVector::PointVector(const Vector &rhs) noexcept : Vector(rhs) {}
@@ -112,13 +114,13 @@ DirectionVector::normal() const {
 }
 
 UnitDirectionVector::UnitDirectionVector(const Vector &rhs) : DirectionVector(rhs) {
-    if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
+    if (!Compare::is_equal(this->norm(), 1.0)) {
         throw std::invalid_argument("Given vector is not an unit vector");
     }
 }
 
 UnitDirectionVector::UnitDirectionVector(double a, double b, double c) : DirectionVector(a,b,c) {
-    if (abs(1.0 - this->norm()) > 0.0001) { // TODO epsilon
+    if (!Compare::is_equal(this->norm(), 1.0)) {
         throw std::invalid_argument("Given vector is not an unit vector");
     }
 }

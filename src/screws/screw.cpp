@@ -16,6 +16,8 @@
 #include "base/matrix3.h"
 #include "base/dual_number.h"
 
+#include "util/precision.h"
+
 Screw::Screw(const Vec6 &data) noexcept : data(data) {}
 
 Screw::Screw(const DirectionVector &n, const MomentVector &m) noexcept : data(Vec6::Zero(6,1)) {
@@ -76,8 +78,6 @@ UnitScrew Screw::normalize() const {
     return UnitScrew(this->n().normal(), MomentVector(this->m()/ this->n().norm()));
 }
 
-#include <iostream>
-
 Projection Screw::project(const Screw &l) const {
     DualEmbeddedMatrix adj(
             SkewMatrix(this->n()),
@@ -129,7 +129,7 @@ Screw operator*(const DualEmbeddedMatrix &lhs, const Screw &rhs) noexcept {
 }
 
 bool operator==(const Screw &lhs, const Screw &rhs) {
-    return lhs.data.isApprox(rhs.data) && lhs.no_rotation() == rhs.no_rotation();
+    return lhs.data.isApprox(rhs.data, Compare::instance().get_precision()) && lhs.no_rotation() == rhs.no_rotation();
 }
 
 bool operator!=(const Screw &lhs, const Screw &rhs) {
@@ -146,7 +146,7 @@ Screw::intersect(const Screw &l) const {
     if(cross(a.n(), b.n()).is_zero()) {
         throw std::domain_error("parallel lines cannot intersect");
     }
-    if ( !(abs(a.m() * b.n() + a.n() * b.m()) < 0.000001)) {
+    if ( !(Compare::is_zero(a.m() * b.n() + a.n() * b.m()))) {
         throw std::domain_error("skew lines cannot intersect");
     }
 
@@ -198,7 +198,7 @@ DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexce
 
     // additional check as the translation of parallel lines cannot be expressed as the dual of a dual inner product
     // this is a degradition due to the sinus of phi being zero
-    if (abs(prod.real()) > 0.999999 ) {
+    if (Compare::is_equal(abs(prod.real()), 1.0)) {
         return DualNumberAlgebra::DualNumber(
                 // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
                 angle.real(),
@@ -220,15 +220,13 @@ double Screw::get_distance(const PointVector &rhs) const noexcept {
 Parallelity Screw::is_parallel(const Screw &l) const noexcept {
     auto distance = this->get_distance(l);
 
-    double eps = 0.0000000001; // TODO global
-
     bool shared_point = false;
 
-    if (abs(distance.dual()) < eps) {
+    if (Compare::is_zero(distance.dual())) {
         shared_point = true;
     }
 
-    if (distance.real() < eps) {
+    if (Compare::is_zero(distance.real())) {
         if (shared_point) {
             return Parallelity::COINCIDE;
         } else {
@@ -236,7 +234,7 @@ Parallelity Screw::is_parallel(const Screw &l) const noexcept {
         }
     }
 
-    if (abs(distance.real()-M_PI) < eps) {
+    if (Compare::is_equal(distance.real(),M_PI)) {
         if (shared_point) {
             return Parallelity::ANTI_COINCIDE;
         } else {
