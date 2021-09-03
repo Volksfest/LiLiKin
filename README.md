@@ -1,3 +1,5 @@
+DAK - Dual Algebra Kinematics is just a working name. I am thinking of renaming in LiLiKin. It makes more sense to emphasis the lines instead of the dual algebra and actually LiLiKin sounds more stupid making it more valid. I would also be fine with just LiLi or LiKin.
+
 # LiLiKin - Library for Line Kinematics
 
 Basic idea is to create a CCC mechanism, which is a fully actuated mechanism in a 6D Task Space.
