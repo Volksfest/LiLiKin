@@ -109,6 +109,7 @@ public:
      */
     RotationMatrix(double z, double y, double x) noexcept;
 
+    static RotationMatrix RotationFromEigen(const Mat3 &data);
     /**
      * \brief Matrix-Matrix multiplication within rotation matrices.
      *

@@ -66,3 +66,8 @@ SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {
         throw std::logic_error("Matrix is not a skew matrix");
     }
 }
+
+RotationMatrix RotationMatrix::RotationFromEigen(const Matrix3::Mat3 &data) {
+    // TODO checks
+    return RotationMatrix(data);
+}
