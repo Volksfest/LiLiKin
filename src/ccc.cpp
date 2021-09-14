@@ -146,6 +146,7 @@ CCCMechanism::inverse(const DualFrame &pose) const {
                 double minus_p_2 = -(n * o);
                 double q = - (p * ( p + 2 * o));
                 double sq = sqrt(minus_p_2 * minus_p_2 - q);
+                if (std::isnan(sq)) sq = 0;
                 // yielding to two solutions!
                 std::vector<double> alphas = {minus_p_2 - sq, minus_p_2 + sq};
 
