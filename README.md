@@ -1,5 +1,3 @@
-DAK - Dual Algebra Kinematics is just a working name. I am thinking of renaming in LiLiKin. It makes more sense to emphasis the lines instead of the dual algebra and actually LiLiKin sounds more stupid making it more valid. I would also be fine with just LiLi or LiKin.
-
 # LiLiKin - Library for Line Kinematics
 
 Basic idea is to create a CCC mechanism, which is a fully actuated mechanism in a 6D Task Space.
@@ -20,6 +18,8 @@ The joint axis can be mathematically described as a line, hence Line Kinematics,
 Lines can also be transformed by other lines.
 
 ![Vizualization of a line transformation](doc/images/cylinder.png)
+
+Image from "An analysis of the dual-complex unit circle with applications to line geometry" by Bongardt.
 
 ### Construction
 
