@@ -103,30 +103,6 @@ public:
     PointVector p() const noexcept;
 
     /**
-     * \brief Transformation of the UnitScrew to a frame
-     *
-     * This should be considered as a usual coordinate transformation
-     *   and thus the frame and the screw should have the same origin coordinate system.
-     *
-     * @param lhs The frame
-     * @param rhs The screw to transform
-     * @return The screw transformed by the frame
-     */
-    friend UnitScrew operator*(const DualFrame &lhs, const UnitScrew &rhs) noexcept;
-
-    /**
-     * \brief Transformation of the Line to a frame
-     *
-     * This should be considered as a usual coordinate transformation
-     *   and thus the frame and the line should have the same origin coordinate system.
-     *
-     * @param lhs The frame
-     * @param rhs The line to transform
-     * @return The line transformed by the frame
-     */
-    friend Line operator*(const DualFrame &lhs, const Line &rhs) noexcept;
-
-    /**
      * \brief Transformation of the UnitLine to a frame
      *
      * This should be considered as a usual coordinate transformation

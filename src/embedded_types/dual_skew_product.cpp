@@ -5,12 +5,11 @@
 #include "embedded_types/dual_embedded_matrix.h"
 #include "embedded_types/dual_skew_product.h"
 #include "screws/screw.h"
-#include "screws/line.h"
 #include "base/dual_number.h"
 #include "base/vector.h"
 
 DualSkewProduct::DualSkewProduct(const Screw &screw) noexcept:
-    _skew(screw.align().normalize()), _angle(screw.norm()) {}
+    _skew(screw.to_line()), _angle(screw.norm()) {}
 
 DualSkewProduct::DualSkewProduct(const UnitLine &screw, const DualNumberAlgebra::DualNumber &argument) noexcept:
     _skew(screw), _angle(argument) {}

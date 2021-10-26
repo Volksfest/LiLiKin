@@ -10,8 +10,6 @@
 #include "base/dual_number.h"
 
 #include "screws/screw.h"
-#include "screws/line.h"
-#include "screws/unit_screw.h"
 #include "screws/unit_line.h"
 
 #include "embedded_types/dual_embedded_matrix.h"
@@ -29,28 +27,22 @@ using namespace DualNumberAlgebra::literals;
 class Mechanism : public testing::Test {
 protected:
     void SetUp() override {
-    UnitLine z(
-            UnitDirectionVector(0,0,1),
-            PointVector(0,0,0)
-    );
+        UnitLine z(
+                UnitDirectionVector(0, 0, 1),
+                PointVector(0, 0, 0)
+        );
 
-    UnitLine x(
-            UnitDirectionVector(1,0,0),
-            PointVector(0,0,0)
-    );
+        UnitLine x(
+                UnitDirectionVector(1, 0, 0),
+                PointVector(0, 0, 0)
+        );
 
-    DualFrame su_zp(
-            RotationMatrix(0,0,0),
-            PointVector(0,0,0)
-    );
+        DualFrame su_zp(
+                RotationMatrix(0, 0, 0),
+                PointVector(0, 0, 0)
+        );
 
-    SU = std::make_unique<CCCMechanism>(z,x,z,su_zp);
-
-
-
-
-
-
+        SU = std::make_unique<CCCMechanism>(z, x, z, su_zp);
     }
 
     std::vector<DualFrame> frames;

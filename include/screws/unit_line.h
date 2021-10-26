@@ -5,7 +5,11 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_UNIT_LINE_H
 #define DUAL_ALGEBRA_KINEMATICS_UNIT_LINE_H
 
-#include "screws/unit_screw.h"
+#include "screws/screw.h"
+
+
+class UnitDirectionVector;
+class DualFrame;
 
 /**
  * \brief A screw without a pitch and a unit direction
@@ -14,7 +18,7 @@
  * So this is a pure pluecker line as it should be defined.
  *
  */
-class UnitLine : public UnitScrew {
+class UnitLine : public Screw {
 protected:
     /**
      * \brief Protected constructor with raw Eigen type
@@ -33,6 +37,22 @@ public:
     * @param a The anchor point
     */
     explicit UnitLine(const UnitDirectionVector &n, const PointVector &a) noexcept;
+
+    /**
+    * \brief Construction of the unit line with unit direction and anchor point
+    *
+    * @param n The unit direction vector
+    * @param a The anchor point
+    */
+    explicit UnitLine(const UnitDirectionVector &n, const MomentVector &m) noexcept;
+
+    /**
+    * \brief Construction of the unit line with unit direction and anchor point
+    *
+    * @param n The unit direction vector
+    * @param a The anchor point
+    */
+    explicit UnitLine(const DirectionVector &n, const PointVector &a) noexcept;
 
     /**
      * \brief Construction of the line with two points
@@ -75,22 +95,18 @@ public:
     UnitLine normalize() const;
 
     /**
-     * \brief Apply a translation to the line
-     *
-     * This translation makes the Line to a UnitScrew giving it a pitch.
-     * @param value The pitch size
-     * @return The resulting unit screw
+     * \brief Create a translated line going through the new anchor
+     * @param new_anchor The new anchor
+     * @return The new parallel line going through the new anchor
      */
-    UnitScrew translate(double value) const noexcept;
+    UnitLine parallel_through_anchor(const PointVector &new_anchor) const noexcept;
 
     /**
-     * \brief Apply a rotation to the unit line be determining how much it should rotate
-     *
-     * This rotation makes the UnitLine to a Line where the norm of the direction vector determines the rotation length
-     * @param value The amount of rotation in radian
-     * @return The resulting Line
+     * \brief Checks if the screw does not rotate
+     * \todo rename
+     * @return True if it has no rotation
      */
-    Line rotate(double value) const noexcept;
+    bool no_rotation() const noexcept override;
 
     /**
      * \brief Apply a rotation and a transloation to the unit line
@@ -102,6 +118,17 @@ public:
      * @return The resulting Screw
      */
     Screw transform(DualNumberAlgebra::DualNumber value) const noexcept;
+
+    /**
+     * \brief Apply a rotation and a transloation to the unit line
+     *
+     * The transformation is given by a dual number, where the real part corresponds to the rotation and the dual
+     *   part to the translation.
+     * This yields to a screw, which actually represents a transformation
+     * @param value The value of the transformation with the real-part for rotation and the dual-part for translation
+     * @return The resulting Screw
+     */
+    Screw transform(double rotation, double translation) const noexcept;
 
     /**
      * \brief Transformation of the UnitLine to a frame

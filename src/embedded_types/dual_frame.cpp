@@ -3,7 +3,6 @@
 //
 
 #include "embedded_types/dual_frame.h"
-#include "screws/line.h"
 
 #include "util/precision.h"
 
@@ -86,5 +85,5 @@ DualSkewProduct DualFrame::constructive_line() const noexcept {
 
     auto angle = acos(0.5 * (DualNumberAlgebra::DualNumber(R.trace(), pxR.trace()) - 1));
 
-    return {screw.align().normalize(), angle};
+    return {screw.to_line(), angle};
 }

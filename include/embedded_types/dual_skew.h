@@ -42,7 +42,7 @@ public:
      * \brief Invert the skew to line again
      * @return The corresponding line
      */
-    UnitScrew screw() const noexcept;
+    UnitLine screw() const noexcept;
 
     /**
      * \brief Comparison between two skews

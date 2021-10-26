@@ -8,9 +8,7 @@
 #include "embedded_types/dual_embedded_matrix.h"
 
 #include "screws/screw.h"
-#include "screws/unit_screw.h"
 #include "screws/unit_line.h"
-#include "screws/line.h"
 
 #include "base/vector.h"
 #include "base/matrix3.h"
@@ -70,12 +68,8 @@ Screw Screw::operator-(const Screw &rhs) const {
     return Screw(this->data - rhs.data);
 }
 
-Line Screw::align() const {
-    return Line(this->n(), this->get_canonical_anchor()); // TODO could be made faster by directly computing
-}
-
-UnitScrew Screw::normalize() const {
-    return UnitScrew(this->n().normal(), MomentVector(this->m()/ this->n().norm()));
+UnitLine Screw::to_line() const noexcept {
+    return UnitLine(this->n().normal(), this->get_canonical_anchor());
 }
 
 Projection Screw::project(const Screw &l) const {
@@ -90,7 +84,7 @@ Projection Screw::project(const Screw &l) const {
 
         auto n = cross(cross(this->n(), c), this->n());
 
-        op = std::make_unique<Screw>(Line(DirectionVector(n),
+        op = std::make_unique<Screw>(UnitLine(DirectionVector(n),
                  PointVector(anchor_n)));
     } else {
         op = std::make_unique<Screw>(adj * l);
@@ -116,8 +110,8 @@ PointVector Screw::point_project(const Screw &l) const noexcept {
     return point_projection;
 }
 
-Line Screw::parallel_through_anchor(const PointVector &new_anchor) const noexcept {
-    return Line(this->n(), new_anchor);
+Screw Screw::parallel_through_anchor(const PointVector &new_anchor) const noexcept {
+    return Screw(this->n(), MomentVector(new_anchor.cross(this->n())));
 }
 
 bool Screw::no_rotation() const noexcept {
@@ -139,8 +133,8 @@ bool operator!=(const Screw &lhs, const Screw &rhs) {
 PointVector
 Screw::intersect(const Screw &l) const {
     //use normalized screws as we don't want to have pitches and scaling by direction vector
-    UnitLine a = this->align().normalize();
-    UnitLine b = l.align().normalize();
+    UnitLine a = this->to_line();
+    UnitLine b = l.to_line();
 
     // check if lines are coplanar and non-parallel
     if(cross(a.n(), b.n()).is_zero()) {
@@ -181,8 +175,8 @@ Screw::intersect(const Screw &l) const {
 DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexcept {
 
     // The screws needs to be aligned and normalized otherwise the dual inner product gets scaled
-    UnitLine t = this->align().normalize();
-    UnitLine r = rhs.align().normalize();
+    UnitLine t = this->to_line();
+    UnitLine r = rhs.to_line();
 
     auto prod = t * r;
 
@@ -210,7 +204,7 @@ DualNumberAlgebra::DualNumber Screw::get_distance(const Screw &rhs) const noexce
 }
 
 double Screw::get_distance(const PointVector &rhs) const noexcept {
-    UnitLine t = this->align().normalize();
+    UnitLine t = this->to_line();
 
     // The same as above but shortened. You can construct a parallel line through the point.
     // The rotation is zero thus it is ignored and only the dual part as a real number is given back.
@@ -249,20 +243,20 @@ Parallelity Screw::is_parallel(const Screw &l) const noexcept {
     }
 }
 
-Line Screw::orthogonal_through_anchor(const PointVector &anchor) const {
-    UnitLine l = this->align().normalize();
+Screw Screw::orthogonal_through_anchor(const PointVector &anchor) const {
+    UnitLine l = this->to_line();
     try {
         DirectionVector n(
             anchor - cross(l.n(), l.m()) - l.n() * (l.n() * anchor)
         );
-        return Line(n, anchor);
-    } catch( std::domain_error &e) {
+        return Screw(n, MomentVector(anchor.cross(n)));
+    } catch( std::domain_error &) {
         throw std::domain_error("Cannot create a orthogonal through anchor if the anchor is on the line");
     }
 }
 
 PointVector Screw::point_project(const PointVector &p) const noexcept {
-    UnitLine l = this->align().normalize();
+    UnitLine l = this->to_line();
 
     return PointVector(this->n() * p * this->n() + this->n().cross(this->m()));
 }

@@ -5,6 +5,8 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_PRECISION_H
 #define DUAL_ALGEBRA_KINEMATICS_PRECISION_H
 
+#include <stdlib.h>
+
 class Compare {
 private:
     double epsilon = 1e-12;

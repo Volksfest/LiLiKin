@@ -9,8 +9,7 @@
 
 class AdjungateMatrix;
 
-class Line;
-class UnitScrew;
+class UnitLine;
 class DualEmbeddedMatrix;
 
 class MomentVector;
@@ -164,20 +163,14 @@ public:
     Screw operator-(const Screw &rhs) const;
 
     /**
-     * \brief Align the screw. Thus remove the pitch of the screw
+     * \brief Align and normalize the screw.
      *
-     * This yields to a moment vector which is orthogonal to the lines direction
+     * This yields to a moment vector which is orthogonal to the lines direction and an unit line direction.
+     * This also means that there is no pitch in the screw anymore
      *
-     * @return Aligned line
+     * @return Normalized and pitchless line
      */
-    Line align() const;
-
-    /**
-     * \brief Normalize the screw. Thus normalize the direction vector
-     *
-     * @return Normalized screw
-     */
-    UnitScrew normalize() const;
+    UnitLine to_line() const noexcept;
 
     /**
      * \brief Create a decomposition of a screw as projections to this screw as reference
@@ -209,7 +202,7 @@ public:
      * @param new_anchor The new anchor
      * @return The new parallel line going through the new anchor
      */
-    Line parallel_through_anchor(const PointVector &new_anchor) const noexcept;
+    Screw parallel_through_anchor(const PointVector &new_anchor) const noexcept;
 
     /**
      * \brief Create a line being orthogonal and going through the anchor
@@ -218,7 +211,7 @@ public:
      * @param anchor The anchor where the orthogonal line should go through
      * @return The orthogonal line through the anchor
      */
-    Line orthogonal_through_anchor(const PointVector &anchor) const;
+    Screw orthogonal_through_anchor(const PointVector &anchor) const;
 
     /**
      * \brief Project a point orthogonally to a plane spanned by the direction of this screw and an anchor point

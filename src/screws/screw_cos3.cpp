@@ -3,7 +3,6 @@
 //
 
 #include "screws/screw.h"
-#include "screws/line.h"
 #include "screws/unit_line.h"
 #include "base/dual_number.h"
 #include "base/vector.h"
@@ -21,10 +20,10 @@ sgn(double x) {
 DualNumber
 acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
     auto a_pro = n.project(a);
-    UnitLine rejection_a = a_pro.r.normalize().align();
+    UnitLine rejection_a = a_pro.r.to_line();
 
     auto b_pro = n.project(b);
-    UnitLine rejection_b = b_pro.r.normalize().align();
+    UnitLine rejection_b = b_pro.r.to_line();
 
     double dot_prod = n.n() * cross(a.n(), b.n());
     double ornt = sgn(dot_prod);
@@ -61,8 +60,8 @@ acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n
     // in that case any kind of projection is not possible and throws an exception
     // with the exception received the coincident case is catched and no transformation (0+0ϵ) is returned
     try {
-        auto a_pro_o = n.project(a).o.normalize().align();
-        auto b_pro_o = n.project(b).o.normalize().align();
+        auto a_pro_o = n.project(a).o.to_line();
+        auto b_pro_o = n.project(b).o.to_line();
 
         double ornt = sgn(
                 n.n() * cross(a_pro_o.n(), b_pro_o.n()) );
@@ -82,9 +81,9 @@ acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n
 
 DualNumber
 Screw::acos3(const Screw &a, const Screw &b) const noexcept {
-    UnitLine a_l = a.normalize().align();
-    UnitLine b_l = b.normalize().align();
-    UnitLine n_l = this->normalize().align();
+    UnitLine a_l = a.to_line();
+    UnitLine b_l = b.to_line();
+    UnitLine n_l = this->to_line();
 
     bool ab_parallel = Compare::is_equal(abs(a_l.n() * b_l.n()), 1.0);
     bool an_parallel = Compare::is_equal(abs(a_l.n() * n_l.n()), 1.0);

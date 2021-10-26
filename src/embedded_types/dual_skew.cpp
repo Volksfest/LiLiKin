@@ -3,7 +3,7 @@
 //
 
 #include "embedded_types/dual_skew.h"
-#include "screws/screw.h"
+#include "screws/unit_line.h"
 #include "base/vector.h"
 
 #include "util/precision.h"
@@ -12,9 +12,9 @@ DualSkew::DualSkew(const SkewMatrix &real, const SkewMatrix &dual) noexcept: Dua
 
 DualSkew::DualSkew(const UnitLine &line) noexcept: DualSkew(SkewMatrix(line.n()), SkewMatrix(line.m())) {}
 
-UnitScrew
+UnitLine
 DualSkew::screw() const noexcept {
-    return UnitScrew(
+    return UnitLine(
         UnitDirectionVector( // check if vector is a unit direction vector
             Vector( // create vector from skew matrix
                 SkewMatrix( // check if matrix is skew matrix

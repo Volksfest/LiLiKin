@@ -17,8 +17,6 @@ add_library(dak
 
         src/screws/screw.cpp
         src/screws/screw_cos3.cpp
-        src/screws/unit_screw.cpp
-        src/screws/line.cpp
         src/screws/unit_line.cpp
 
         src/embedded_types/dual_embedded_matrix.cpp

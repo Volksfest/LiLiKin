@@ -9,8 +9,6 @@
 #include "base/vector.h"
 #include "base/dual_number.h"
 #include "screws/screw.h"
-#include "screws/line.h"
-#include "screws/unit_screw.h"
 #include "screws/unit_line.h"
 
 #include "embedded_types/dual_embedded_matrix.h"
@@ -28,45 +26,43 @@ using namespace DualNumberAlgebra;
 using namespace DualNumberAlgebra::literals;
 
 TEST(Screws, Creation) { // NOLINT
-    Screw a(
+    Screw a_s(
             DirectionVector(0,0,1),
             MomentVector(0,0,0)
             );
-    Line b(
-            DirectionVector(0,0,1),
-            PointVector(0,0,1)
-            );
 
-    UnitScrew c(
-            UnitDirectionVector(0,0,1),
-            MomentVector(0,0,0)
-            );
-    UnitLine d(
-            PointVector(0,0,-1),
-            PointVector(0,0,42)
-            );
-
-    EXPECT_EQ(a,b);
-    EXPECT_EQ(c,d);
-    EXPECT_NE(a,c);
-}
-
-TEST(Screws, Transformation) { // NOLINT
-    UnitLine unit_line(
+    UnitLine a_l(
             UnitDirectionVector(0,0,1),
             PointVector(0,0,0)
             );
 
-    auto unit_screw = unit_line.translate(1.5);
-    auto line = unit_line.rotate(M_PI_4);
+    EXPECT_NE(a_s,a_l);
+    EXPECT_EQ(a_s.n(), a_l.n());
+    EXPECT_EQ(a_s.m(), a_l.m());
 
-    auto screw = unit_line.transform(DualNumber(M_PI_4, 1.5));
-    auto line_to_screw = line.translate(1.5);
-    auto unit_screw_to_screw = unit_screw.rotate(M_PI_4);
+    UnitLine a(
+            PointVector(0,0,-1),
+            PointVector(0,0,42)
+            );
 
-    EXPECT_EQ(screw, line_to_screw);
-    EXPECT_EQ(screw, unit_screw_to_screw);
-    EXPECT_EQ(line_to_screw, unit_screw_to_screw);
+    UnitLine b(
+            PointVector(0,1,1),
+            PointVector(0,1,2)
+            );
+
+    UnitLine c(
+            DirectionVector(0,0,1),
+            PointVector(0,1,0)
+            );
+
+    UnitLine d(
+            UnitDirectionVector(0,0,1),
+            MomentVector(1,0,0)
+            );
+
+    EXPECT_NE(a,b);
+    EXPECT_EQ(b,c);
+    EXPECT_EQ(b,d);
 }
 
 TEST(Screws, Distance) { //NOLINT
