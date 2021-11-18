@@ -392,9 +392,9 @@ namespace Eigen {
              */
             IsSigned = 1,
             /**
-             * \todo Maybe change?
+             * \brief Should work without constructor
              */
-            RequireInitialization = 1,
+            RequireInitialization = 0,
             /**
              * \brief Fix read
              */

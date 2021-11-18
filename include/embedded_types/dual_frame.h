@@ -16,17 +16,6 @@
  * The skew translation with rotation is the dual part
  */
 class DualFrame: public DualEmbeddedMatrix {
-private:
-    /**
-     * \brief Private constructor directly from a generic dual embedded matrix
-     *
-     * It is private to enforce a high level user to use the other constructor.
-     * Especially important to avoid wrong rotation matrix format.
-     *
-     * \todo remove as it can be directly created by a Eigen type which is only protected
-     * @param data Data in generic dual embedded matrix
-     */
-    explicit DualFrame(const DualEmbeddedMatrix &mat) noexcept;
 protected:
     /**
      * \brief Protected constructor with raw Eigen type

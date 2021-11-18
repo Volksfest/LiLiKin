@@ -36,9 +36,8 @@ TEST(Screws, Creation) { // NOLINT
             PointVector(0,0,0)
             );
 
-    EXPECT_NE(a_s,a_l);
-    EXPECT_EQ(a_s.n(), a_l.n());
-    EXPECT_EQ(a_s.m(), a_l.m());
+    // Even though a screw is considered to have a transformation, if it doesn't it is practical a line
+    EXPECT_EQ(a_s,a_l);
 
     UnitLine a(
             PointVector(0,0,-1),

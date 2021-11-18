@@ -17,19 +17,17 @@ class DualSkewProduct;
  * It behaves similar to the SkewMatrix but for lines
  */
 class DualSkew: public DualEmbeddedMatrix {
-public:
+private:
     /**
      * \brief Generate the DualSkew by the real and dual skews
      *
      * Mostly given by a skew direction and a skew moment
      *
-     * \todo this makes actually no sense to be public! Especially because screw() gives a UnitScrew with hidden assumptions!
-     * \todo remove the default constructor
      * @param real The real part of the dual skew
      * @param dual The dual part of the dual skew
      */
     DualSkew(const SkewMatrix &real, const SkewMatrix &dual) noexcept;
-
+public:
     /**
      * \brief create a DualSkew for a line
      *

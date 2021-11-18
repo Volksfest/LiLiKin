@@ -21,7 +21,6 @@ DualNumberAlgebra::DualNumber DualSkewProduct::angle() const noexcept {
     return this->_angle;
 }
 
-#include <iostream>
 DualSkewProduct DualSkewProduct::operator+(const DualSkewProduct &rhs) const noexcept {
     //Eigen::Matrix<double,6,6> sum = DualEmbeddedMatrix(this->_angle).data * this->_skew.data + DualEmbeddedMatrix(rhs._angle).data * rhs._skew.data;
 
@@ -30,7 +29,7 @@ DualSkewProduct DualSkewProduct::operator+(const DualSkewProduct &rhs) const noe
 
     Eigen::Matrix<double, 6,6> sum = weighted_lhs_raw * weighted_rhs_raw - weighted_rhs_raw * weighted_lhs_raw; //Lie Bracket
 
-    // To create type safety, sum will be decomposed into the skews itself and then be rebuild. TODO actually waste of compute time
+    // To create type safety, sum will be decomposed into the skews itself and then be rebuild.
     auto n_skew = SkewMatrix(Matrix3(sum.topLeftCorner(3,3)));
     auto m_skew = SkewMatrix(Matrix3(sum.bottomLeftCorner(3,3)));
     // this step is allthough still necessary as DualSkewProduct contains the unit line and thus normalizes the screw

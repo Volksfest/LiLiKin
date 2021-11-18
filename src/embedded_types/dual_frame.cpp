@@ -6,8 +6,6 @@
 
 #include "util/precision.h"
 
-DualFrame::DualFrame(const DualEmbeddedMatrix &mat) noexcept: DualEmbeddedMatrix(mat) {}
-
 DualFrame::DualFrame(const Mat6 &mat) noexcept: DualEmbeddedMatrix(mat) {}
 
 DualFrame::DualFrame(const RotationMatrix &rot, const PointVector &trans) noexcept:
@@ -29,7 +27,16 @@ DualFrame DualFrame::operator*(const DualFrame &rhs) const noexcept {
 }
 
 DualFrame DualFrame::inverse() const noexcept {
-    return DualFrame(this->data.inverse()); //TODO probably could be done faster?!?
+    Eigen::Matrix<double, 3,3> rot = this->R().get().transpose();
+    Eigen::Matrix<double, 3,3> dual = this->pxR().get().transpose();
+
+    Mat6 data;
+    data.topLeftCorner(3, 3)     = rot;
+    data.topRightCorner(3, 3)     = Eigen::Matrix<double,3,3>::Zero(3, 3);
+    data.bottomLeftCorner(3, 3)     = dual;
+    data.bottomRightCorner(3, 3)     = rot;
+
+    return DualFrame(data);
 }
 
 RotationMatrix DualFrame::R() const noexcept {
@@ -41,7 +48,7 @@ Matrix3 DualFrame::pxR() const noexcept {
 }
 
 PointVector DualFrame::p() const noexcept {
-    return PointVector(Vector(SkewMatrix(this->pxR() * this->R().inverse()))); // multiple type conversions are needed for safe type conversion
+    return PointVector(Vector(SkewMatrix(this->pxR() * this->R().inverse())));
 }
 
 std::ostream &operator<<(std::ostream &stream, const DualFrame &d) {

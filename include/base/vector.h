@@ -159,7 +159,6 @@ public:
 
     /**
      * \brief Comparison of Vectors
-     * \todo Implement a global epsilon
      * @param rhs right-hand-side
      * @return True if equal
      */

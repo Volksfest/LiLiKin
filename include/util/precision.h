@@ -9,7 +9,7 @@
 
 class Compare {
 private:
-    double epsilon = 1e-12;
+    double epsilon = 1e-7;
 
 public:
     inline double get_precision() { return this->epsilon; }

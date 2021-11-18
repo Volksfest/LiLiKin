@@ -50,29 +50,30 @@ CCCMechanism::inverse(const DualFrame &pose) const {
 
     // Check the line relation between Line 1 and the final Line 3
     // This will result in annoying special cases
-    Parallelity parallelity = this->l12.is_parallel(s * this->l34);
+    LineRelation parallelity = this->l12.get_relation_to(s * this->l34);
 
     // Container for the solutions
     std::vector<Configuration> solutions;
     for (auto phi_2 : phi2_solutions) {
         // 180° rotations have to be considered separately
-        if (parallelity == Parallelity::ANTI_COINCIDE || parallelity== Parallelity::ANTI_PARALLEL) {
+        if (parallelity == LineRelation::ANTI_COINCIDE || parallelity== LineRelation::ANTI_PARALLEL) {
             phi_2 = phi_2 + M_PI;
         }
         // M2 can be calculated already and is the same in all cases
         DualFrame m2(DualSkewProduct(this->l23, phi_2));
 
         // Generic case
-        if (parallelity == Parallelity::SKEW || parallelity == Parallelity::INTERSECT) {
+        if (parallelity == LineRelation::SKEW || parallelity == LineRelation::INTERSECT) {
             // Calculate the angles as the missing transformation around a single line
-            // See paper; TODO correct refs
+            // See paper: "The adjoint trigonometric representation of displacements
+            // and a closed-form solution to the IKP of general 3C chains", Bongardt, ZAMM, 2019
             auto phi_1 = this->l12.acos3(m2 * this->l34, s * this->l34);
             auto phi_3 = this->l34.acos3(s.inverse() * this->l12, m2.inverse() * this->l12);
             solutions.push_back({phi_1, phi_2, phi_3});
 
         } else {
             // Coincide
-            if (parallelity == Parallelity::ANTI_COINCIDE || parallelity == Parallelity::COINCIDE) {
+            if (parallelity == LineRelation::ANTI_COINCIDE || parallelity == LineRelation::COINCIDE) {
                 // Get an orthogonal line to check orientation of the frame
                 // The orthogonality ensures, that it is not the rotation axis
                 DirectionVector u(cross(this->l12.n(), this->l23.n()));

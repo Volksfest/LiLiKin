@@ -63,11 +63,19 @@ SkewMatrix::SkewMatrix(const Vector & _vector) noexcept: Matrix3(Mat3::Zero(3,3)
 SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {
     auto check = (this->data + this->data.transpose()).array().abs();
     if ( ! (check< Compare::instance().get_precision()).all() ) {
-        throw std::logic_error("Matrix is not a skew matrix");
+        throw std::domain_error("Matrix is not a skew matrix");
     }
 }
 
 RotationMatrix RotationMatrix::RotationFromEigen(const Matrix3::Mat3 &data) {
-    // TODO checks
+    auto check = (data - data.transpose()).array().abs();
+    if ( ! (check< Compare::instance().get_precision()).all() ) {
+        throw std::domain_error("Matrix is not orthogonal");
+    }
+
+    if ( !Compare::is_equal(1.0, data.determinant())) {
+        throw std::domain_error("Matrix is not orthogonal");
+    }
+
     return RotationMatrix(data);
 }

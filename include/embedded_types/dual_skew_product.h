@@ -31,14 +31,6 @@ private:
     DualNumberAlgebra::DualNumber _angle;
 public:
     /**
-     * \brief Deleted default constructor
-     *
-     * As it makes no sense. We need a non-zero line
-     * \todo Can actually be removed as the compiler can't create a default constructor for non default-constructible DualSkew. At least it should be!
-     */
-    DualSkewProduct() = delete;
-
-    /**
      * \brief SkewProduct generation by a screw with its norm
      *
      * The screws norm - with respect to Screw::no_rotation() to guarantee zero real parts - will be used as angle

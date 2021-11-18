@@ -35,13 +35,6 @@ public:
     explicit Matrix3(const Mat3 &data) noexcept;
 
     /**
-     * \brief Delete the default constructor
-     * Good question why.
-     * \todo enable it again for a zero matrix?
-     */
-    Matrix3() = delete;
-
-    /**
      * Generic scalar matrix multiplication
      * @param rhs right factor
      * @return Scaled matrix
@@ -86,7 +79,9 @@ Matrix3 operator*(double lhs, const Matrix3 &rhs) noexcept;
  * \brief Orthonormal matrix representing rotations
  *
  * Right now only z-y-x convention is implemented to generate the matrix.
- * \todo create more?
+ *
+ * Other possibility is to create a rotationmatrix via a Eigen3.
+ * The matrix will be checked for being an orthogonal matrix.
  */
 class RotationMatrix : public Matrix3 {
 private:
@@ -109,7 +104,18 @@ public:
      */
     RotationMatrix(double z, double y, double x) noexcept;
 
+    /**
+     * \brief Create a rotation matrix of raw data
+     *
+     * Matrix will be checked if it is a orthogonal matrix
+     *
+     * \exception std::domain_error Will be thrown if the input matrix is not an orthogonal matrix
+     *
+     * @param rhs The rotationmatrix
+     *
+     */
     static RotationMatrix RotationFromEigen(const Mat3 &data);
+
     /**
      * \brief Matrix-Matrix multiplication within rotation matrices.
      *
@@ -151,7 +157,7 @@ public:
     /**
      * Check if the input is a skew matrix and use it as skew matrix
      *
-     * \exception std::logic_error Will be thrown if the input matrix is not a skew <a href="https://en.cppreference.com/w/cpp/error/logic_error">std::logic_error</a> matrix
+     * \exception std::domain_error Will be thrown if the input matrix is not a skew matrix
      *
      * @param rhs The matrix to be checked
      *
