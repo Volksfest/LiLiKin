@@ -65,29 +65,66 @@ TEST(Screws, Creation) { // NOLINT
 }
 
 TEST(Screws, Distance) { //NOLINT
-    UnitLine a(
+    UnitLine z_p(
             UnitDirectionVector(0,0,1),
-            PointVector(0,1,0)
+            PointVector(1,3,0)
             );
 
-    UnitLine b(
-            UnitDirectionVector(0,0,1),
-            PointVector(1,0,0)
-            );
-
-    UnitLine bi(
+    UnitLine z_n(
             UnitDirectionVector(0,0,-1),
-            PointVector(1,0,0)
-            );
+            PointVector(3,3,0)
+    );
 
-    UnitLine c(
+    UnitLine x(
             UnitDirectionVector(1,0,0),
-            PointVector(0,5,0)
+            PointVector(0,2,0)
+    );
+
+    UnitLine l(
+            DirectionVector(1,1,1),
+            PointVector(2,2,0)
             );
 
-    EXPECT_NEAR_DN(a.get_distance(b), DualNumber(0, M_SQRT2), 0.000001);
-    EXPECT_NEAR_DN(b.get_distance(bi), DualNumber(M_PI, 0), 0.000001);
-    EXPECT_NEAR_DN(a.get_distance(c), DualNumber(M_PI_2, 4),0.000001);
+    double ang = acos(1/sqrt(3));
+
+    EXPECT_NEAR_DN(z_p.get_distance(z_n), DualNumber(M_PI, -2), 0.000001);
+    EXPECT_NEAR_DN(z_p.get_distance(x), DualNumber(M_PI_2, -1), 0.000001);
+    EXPECT_NEAR_DN(x.get_distance(l), DualNumber(ang, 0),0.000001);
+    EXPECT_NEAR_DN(z_p.get_distance(l), DualNumber(ang, -M_SQRT2), 0.000001);
+    EXPECT_NEAR_DN(z_n.get_distance(l), DualNumber(M_PI-ang, 0), 0.000001);
+}
+
+TEST(Screws, Orthogonal_Point) { //NOLINT
+    UnitLine z_p(
+            UnitDirectionVector(0,0,1),
+            PointVector(1,3,0)
+    );
+
+    UnitLine z_n(
+            UnitDirectionVector(0,0,-1),
+            PointVector(3,3,0)
+    );
+
+    UnitLine x(
+            UnitDirectionVector(1,0,0),
+            PointVector(0,2,0)
+    );
+
+    UnitLine l(
+            DirectionVector(1,1,1),
+            PointVector(2,2,0)
+    );
+
+
+    auto o_p = z_p.orthogonal(z_n).to_line();
+    auto o_d = z_p.orthogonal(l).to_line();
+    auto o_x = z_p.orthogonal(x).to_line();
+
+    EXPECT_NEAR_DN(o_p.get_distance(x), DualNumber(M_PI, -1), 0.000001);
+
+    EXPECT_EQ(o_p.n(), DirectionVector(-1,0,0));
+    EXPECT_EQ(o_d.n(), DirectionVector(-1,1,0).normal());
+    EXPECT_EQ(o_x.n(), DirectionVector(0,1,0).normal());
 }
 
 TEST(Screws, Projection) {
