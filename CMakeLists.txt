@@ -44,6 +44,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
             test/dual_number_test.cpp
             test/screws_test.cpp
             test/ccc_test.cpp
+            test/random_test.cpp
             )
     target_include_directories(do_tests PRIVATE include)
     target_link_libraries(do_tests gtest_main dak)
