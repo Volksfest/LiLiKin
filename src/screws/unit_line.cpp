@@ -51,10 +51,11 @@ std::tuple<Screw, Screw, Screw> UnitLine::decomposition(const Screw &l) const {
 }
 
 Screw UnitLine::orthogonal(const Screw &l) const {
+    Vector nm = this->n().cross(l.m()) + this->m().cross(l.n()); // na x mb + ma x nb
     try {
         return Screw(
                 DirectionVector(this->n().cross(l.n())),// na x nb
-                MomentVector(this->n().cross(l.m()) + this->m().cross(l.n())) // na x mb + ma x nb
+                MomentVector(nm) // na x mb + ma x nb
         );
     } catch(const std::invalid_argument &) {
         try {
@@ -63,7 +64,7 @@ Screw UnitLine::orthogonal(const Screw &l) const {
             // another type with switched direction and moment would be necessary or something like that
             // but this would be much work only for this purpose.
             return Screw(
-                    DirectionVector(this->n().cross(l.m()) + this->m().cross(l.n())), // na x mb + ma x nb
+                    DirectionVector(nm), // na x mb + ma x nb
                     MomentVector(this->m().cross(l.m())) // ma x mb
                     );
 
@@ -99,14 +100,10 @@ Screw UnitLine::projection(const Screw &l, const Screw *rejection) const noexcep
 }
 
 PointVector UnitLine::point_project(const UnitLine &l) const noexcept {
-    PointVector point_projection = this->get_canonical_anchor();
-    double cross_norm = cross(l.n(), this->n()).norm();
-    if (cross_norm != 0) {
-        auto projection = SkewMatrix(l.n().normal());
-        point_projection += this->n() * (projection * projection * this->n() * (this->get_canonical_anchor() - l.get_canonical_anchor()) /
-                                         cross_norm / cross_norm);
-    }
-    return point_projection;
+    auto d = l.get_canonical_anchor() - this->get_canonical_anchor();
+    auto n = this->line_cross(l);
+    return PointVector(
+            this->get_canonical_anchor() - (l.n().cross(l.n().cross(this->n())) * d / (n*n)) * this->n());
 }
 
 UnitLine UnitLine::parallel_through_anchor(const PointVector &new_anchor) const noexcept {
