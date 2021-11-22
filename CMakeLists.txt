@@ -23,6 +23,8 @@ add_library(dak
         src/embedded_types/dual_frame.cpp
         src/embedded_types/dual_skew.cpp
         src/embedded_types/dual_skew_product.cpp
+
+        src/util/random.cpp
         )
 target_include_directories(dak PRIVATE include)
 target_link_libraries(dak Eigen3::Eigen)

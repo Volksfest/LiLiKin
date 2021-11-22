@@ -68,7 +68,7 @@ SkewMatrix::SkewMatrix(const Matrix3 & rhs) : Matrix3(rhs) {
 }
 
 RotationMatrix RotationMatrix::RotationFromEigen(const Matrix3::Mat3 &data) {
-    auto check = (data - data.transpose()).array().abs();
+    auto check = (Matrix3::Mat3::Identity(3,3) - data * data.transpose()).array().abs();
     if ( ! (check< Compare::instance().get_precision()).all() ) {
         throw std::domain_error("Matrix is not orthogonal");
     }
