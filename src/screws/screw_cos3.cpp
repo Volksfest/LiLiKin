@@ -29,7 +29,7 @@ acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept 
     // thus calculate the difference of the intersection which should be aligned to the normals direction
     // otherwise it is negative
     if( Compare::is_zero(dot_prod) ) {
-        ornt = sgn ( (n.intersect(rejection_b) - n.intersect(rejection_a)) * n.n() );
+        ornt = -sgn ( (n.intersect(rejection_b) - n.intersect(rejection_a)) * n.n() );
     }
     return rejection_a.get_distance(rejection_b) * ornt;
 }

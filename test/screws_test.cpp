@@ -156,7 +156,7 @@ TEST(Screws, Acos3) { //NOLINT
             );
 
     auto res = line2.acos3(a,b1);
-    EXPECT_NEAR_DN(res, -DualNumber(M_PI, sqrt(2)), 0.00001);
+    EXPECT_NEAR_DN(res, DualNumber(M_PI, -sqrt(2)), 0.00001);
 
     UnitLine a_p_l(
             UnitDirectionVector(0,0,1),

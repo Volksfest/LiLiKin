@@ -225,12 +225,17 @@ public:
      *
      * Caveat: In theory, r = pi also results in coinciding and parallel screws.
      * The screws don't have the same orientation anymore but are still parallel or coinciding without orientation.
-     * This can yield to many problems, so it has to be checked. See also Screw::is_parallel() and Parallelity.
+     * This can yield to many problems, so it has to be checked. See also UnitLine::get_relation_to() and LineRelation.
      *
      * @param rhs right-hand-side
      * @return Angular and translational distance as dual number
      */
     DualNumberAlgebra::DualNumber get_distance(const UnitLine &rhs) const noexcept;
+
+    /**
+     *
+     */
+    DirectionVector line_cross(const UnitLine &rhs) const;
 
     /**
      * \brief Retrieve the relationship between two screws

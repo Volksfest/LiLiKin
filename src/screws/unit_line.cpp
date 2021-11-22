@@ -156,32 +156,37 @@ UnitLine::intersect(const UnitLine &l) const {
 }
 
 DualNumberAlgebra::DualNumber UnitLine::get_distance(const UnitLine &rhs) const noexcept {
-    // The screws needs to be aligned and normalized otherwise the dual inner product gets scaled
-    UnitLine t = *this;
-    UnitLine r = rhs;
+    auto n1 = this->n();
+    auto n2 = rhs.n();
 
-    auto prod = t * r;
 
-    // fix some precission error which results in domain errors
-    // the norm of the dot products of unit vectors cannot be greater than 1
-    if (prod.real() > 1.0) {
-        prod = DualNumberAlgebra::DualNumber(1.0, prod.dual());
+    double d = 0;
+    try {
+        auto n12 = this->line_cross(rhs);
+        d = (n1.cross(this->m()) - n2.cross(rhs.m())) * n12.normal();
+    } catch(...) {
+        // Do nothing
     }
-    if (prod.real() < -1.0) {
-        prod = DualNumberAlgebra::DualNumber(-1.0, prod.dual());
-    }
-    auto angle = acos(prod);
 
-    // additional check as the translation of parallel lines cannot be expressed as the dual of a dual inner product
-    // this is a degradition due to the sinus of phi being zero
-    if (Compare::is_equal(abs(prod.real()), 1.0)) {
-        return DualNumberAlgebra::DualNumber(
-                // still copy the real part as it can be either 0 or Pi (depending on the direction of the spear)
-                angle.real(),
-                // as the lines are parallel the moments give the distance
-                prod.real() > 0 ? (t.m() - r.m()).norm() : (t.m() + r.m()).norm() );
-    } else {
-        return angle;
+    double prod = n1 * n2;
+    if (prod > 1) prod = 1;
+    if (prod < -1) prod = -1;
+
+    return DualNumberAlgebra::DualNumber(
+            acos(prod),
+            -d
+            );
+}
+
+DirectionVector UnitLine::line_cross(const UnitLine &rhs) const {
+    try {
+        return DirectionVector(this->n().cross(rhs.n())); // na x nb
+    } catch(const std::invalid_argument &) {
+        try {
+            return DirectionVector(this->n().cross(rhs.m()) + this->m().cross(rhs.n())); // na x mb + ma x nb
+        } catch(const std::invalid_argument &) {
+            throw std::domain_error("Orthogonal direction of coinciding lines is not possible");
+        }
     }
 }
 

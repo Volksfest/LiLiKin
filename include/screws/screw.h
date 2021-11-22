@@ -90,7 +90,7 @@ public:
      * This is just the dot product of the screw in dual vector representation.
      * The semantics are the same as the usual dual product with the cosine relation allthough it has some caveats.
      *
-     * Thus use the Screw::get_distance(const Screw &) to get the corrected angular and translational distance.
+     * Thus use the UnitLine::get_distance(const UnitLine &) to get the corrected angular and translational distance.
      *
      * @param rhs The other screw
      * @return The dot product between screws
