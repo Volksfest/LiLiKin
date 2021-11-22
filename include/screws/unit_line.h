@@ -233,7 +233,13 @@ public:
     DualNumberAlgebra::DualNumber get_distance(const UnitLine &rhs) const noexcept;
 
     /**
+     * \brief Calculate the orthogonal direction of two lines
      *
+     * This yields to something like a cross product which is stable to parallel lines.
+     * Due to the positions of the line there is enough information to still calculate a legitimate orthogonal direction.
+     * This is the same algorithm as in UnitLine::orthogonal but without the calculation of the moment for speed up.
+     * @param rhs right-hand-side
+     * @return The orthogonal direction of both lines
      */
     DirectionVector line_cross(const UnitLine &rhs) const;
 

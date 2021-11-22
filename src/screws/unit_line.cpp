@@ -101,6 +101,7 @@ Screw UnitLine::projection(const Screw &l, const Screw *rejection) const noexcep
 
 PointVector UnitLine::point_project(const UnitLine &l) const noexcept {
     auto d = l.get_canonical_anchor() - this->get_canonical_anchor();
+    // Probably, the point projection gets expensive but this makes it stable and without any consideration of cases
     auto n = this->line_cross(l);
     return PointVector(
             this->get_canonical_anchor() - (l.n().cross(l.n().cross(this->n())) * d / (n*n)) * this->n());
