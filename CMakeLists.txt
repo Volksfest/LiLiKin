@@ -31,7 +31,7 @@ target_link_libraries(dak Eigen3::Eigen)
 
 ### Example
 add_executable(dak-example
-    applications/example.cpp)
+    example.cpp)
 target_include_directories(dak-example PRIVATE include)
 target_link_libraries(dak-example PRIVATE dak)
 
