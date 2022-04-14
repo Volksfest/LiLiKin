@@ -5,9 +5,9 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_DUAL_FRAME_H
 #define DUAL_ALGEBRA_KINEMATICS_DUAL_FRAME_H
 
-#include "embedded_types/dual_embedded_matrix.h"
-#include "embedded_types/dual_skew_product.h"
-#include "base/vector.h"
+#include "dual_embedded_matrix.h"
+#include "dual_skew_product.h"
+#include "vector.h"
 
 /**
  * \brief Frame representation as a dual embedded matrix

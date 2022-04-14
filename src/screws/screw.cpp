@@ -4,16 +4,16 @@
 
 #include <cmath>
 
-#include "embedded_types/dual_embedded_matrix.h"
+#include "dual_embedded_matrix.h"
 
-#include "screws/screw.h"
-#include "screws/unit_line.h"
+#include "screw.h"
+#include "unit_line.h"
 
-#include "base/vector.h"
-#include "base/matrix3.h"
-#include "base/dual_number.h"
+#include "vector.h"
+#include "matrix3.h"
+#include "dual_number.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 Screw::Screw(const Vec6 &data) noexcept : data(data) {}
 

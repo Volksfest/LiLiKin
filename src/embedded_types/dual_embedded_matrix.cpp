@@ -2,12 +2,12 @@
 // Created by sba on 19.07.21.
 //
 
-#include "embedded_types/dual_embedded_matrix.h"
+#include "dual_embedded_matrix.h"
 
-#include "screws/screw.h"
+#include "screw.h"
 
-#include "base/matrix3.h"
-#include "base/dual_number.h"
+#include "matrix3.h"
+#include "dual_number.h"
 
 DualEmbeddedMatrix::DualEmbeddedMatrix(const Mat6 &data) noexcept: data(data) {}
 

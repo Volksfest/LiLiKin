@@ -2,11 +2,11 @@
 // Created by sba on 19.07.21.
 //
 
-#include "embedded_types/dual_skew.h"
-#include "screws/unit_line.h"
-#include "base/vector.h"
+#include "dual_skew.h"
+#include "unit_line.h"
+#include "vector.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 DualSkew::DualSkew(const SkewMatrix &real, const SkewMatrix &dual) noexcept: DualEmbeddedMatrix(real, dual) {}
 

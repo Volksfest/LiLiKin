@@ -4,12 +4,12 @@
 
 #include <memory>
 
-#include <util/precision.h>
-#include "embedded_types/dual_frame.h"
-#include "embedded_types/dual_embedded_matrix.h"
-#include "screws/unit_line.h"
-#include "screws/screw.h"
-#include "base/vector.h"
+#include "precision.h"
+#include "dual_frame.h"
+#include "dual_embedded_matrix.h"
+#include "unit_line.h"
+#include "screw.h"
+#include "vector.h"
 
 UnitLine::UnitLine(const Vec6 &data) noexcept: Screw(data) {}
 

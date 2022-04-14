@@ -2,7 +2,7 @@
 // Created by sba on 22.11.21.
 //
 
-#include "util/random.h"
+#include "random.h"
 #include <gtest/gtest.h>
 
 // Just check, if they don't throw an exception

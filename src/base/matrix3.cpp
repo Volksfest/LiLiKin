@@ -2,10 +2,10 @@
 // Created by sba on 07.07.21.
 //
 
-#include "base/matrix3.h"
-#include "base/vector.h"
+#include "matrix3.h"
+#include "vector.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 Matrix3::Matrix3(const Mat3  &data) noexcept: data(data) {}
 

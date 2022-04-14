@@ -5,7 +5,7 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_UNIT_LINE_H
 #define DUAL_ALGEBRA_KINEMATICS_UNIT_LINE_H
 
-#include "screws/screw.h"
+#include "screw.h"
 
 /**
  * \brief Description of the relationship between lines

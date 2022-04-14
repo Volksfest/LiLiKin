@@ -2,11 +2,11 @@
 // Created by sba on 20.07.21.
 //
 
-#include "embedded_types/dual_embedded_matrix.h"
-#include "embedded_types/dual_skew_product.h"
-#include "screws/screw.h"
-#include "base/dual_number.h"
-#include "base/vector.h"
+#include "dual_embedded_matrix.h"
+#include "dual_skew_product.h"
+#include "screw.h"
+#include "dual_number.h"
+#include "vector.h"
 
 DualSkewProduct::DualSkewProduct(const Screw &screw) noexcept:
     _skew(screw.to_line()), _angle(screw.norm()) {}

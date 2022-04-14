@@ -2,9 +2,9 @@
 // Created by sba on 19.07.21.
 //
 
-#include "embedded_types/dual_frame.h"
+#include "dual_frame.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 DualFrame::DualFrame(const Mat6 &mat) noexcept: DualEmbeddedMatrix(mat) {}
 

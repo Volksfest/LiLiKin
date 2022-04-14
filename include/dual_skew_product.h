@@ -5,9 +5,9 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_DUAL_SKEW_PRODUCT_H
 #define DUAL_ALGEBRA_KINEMATICS_DUAL_SKEW_PRODUCT_H
 
-#include "embedded_types/dual_skew.h"
-#include "base/dual_number.h"
-#include "screws/screw.h"
+#include "dual_skew.h"
+#include "dual_number.h"
+#include "screw.h"
 
 /**
  * \brief A Product of a UnitLine and its transformation value

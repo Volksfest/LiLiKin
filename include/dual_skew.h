@@ -5,9 +5,9 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_DUAL_SKEW_H
 #define DUAL_ALGEBRA_KINEMATICS_DUAL_SKEW_H
 
-#include "embedded_types/dual_embedded_matrix.h"
-#include "screws/unit_line.h"
-#include "base/matrix3.h"
+#include "dual_embedded_matrix.h"
+#include "unit_line.h"
+#include "matrix3.h"
 
 class DualSkewProduct;
 

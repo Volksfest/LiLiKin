@@ -8,9 +8,9 @@
 #include <vector>
 #include <tuple>
 
-#include "base/dual_number.h"
-#include "screws/unit_line.h"
-#include "embedded_types/dual_frame.h"
+#include "dual_number.h"
+#include "unit_line.h"
+#include "dual_frame.h"
 
 /**
  * \brief The configuration of an CCC mechanism

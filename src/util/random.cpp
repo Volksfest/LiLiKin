@@ -2,7 +2,7 @@
 // Created by sba on 22.11.21.
 //
 
-#include "util/random.h"
+#include "random.h"
 
 #include <random>
 #include <functional>

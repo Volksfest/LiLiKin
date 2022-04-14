@@ -4,10 +4,10 @@
 
 #include <iostream>
 
-#include "base/dual_number.h"
-#include "base/vector.h"
-#include "screws/unit_line.h"
-#include "embedded_types/dual_frame.h"
+#include "dual_number.h"
+#include "vector.h"
+#include "unit_line.h"
+#include "dual_frame.h"
 
 #include "ccc.h"
 

@@ -2,9 +2,9 @@
 // Created by sba on 06.07.21.
 //
 
-#include "base/dual_number.h"
+#include "dual_number.h"
 #include <iostream>
-#include "util/precision.h"
+#include "precision.h"
 
 namespace DualNumberAlgebra {
 

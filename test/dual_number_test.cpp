@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 #include <chrono>
-#include "base/dual_number.h"
+#include "dual_number.h"
 
 #include <gtest/gtest.h>
 

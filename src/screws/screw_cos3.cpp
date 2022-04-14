@@ -2,12 +2,12 @@
 // Created by sba on 20.07.21.
 //
 
-#include "screws/screw.h"
-#include "screws/unit_line.h"
-#include "base/dual_number.h"
-#include "base/vector.h"
+#include "screw.h"
+#include "unit_line.h"
+#include "dual_number.h"
+#include "vector.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 using DualNumberAlgebra::DualNumber;
 

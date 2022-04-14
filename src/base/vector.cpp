@@ -2,10 +2,10 @@
 // Created by sba on 07.07.21.
 //
 
-#include "base/vector.h"
-#include "base/matrix3.h"
+#include "vector.h"
+#include "matrix3.h"
 
-#include "util/precision.h"
+#include "precision.h"
 
 Vector::Vector(const Vec3 &data) noexcept {
     this->data = data;

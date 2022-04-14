@@ -5,11 +5,11 @@
 #ifndef DUAL_ALGEBRA_KINEMATICS_RANDOM_H
 #define DUAL_ALGEBRA_KINEMATICS_RANDOM_H
 
-#include "base/vector.h"
-#include "screws/unit_line.h"
-#include "base/matrix3.h"
-#include "base/dual_number.h"
-#include "embedded_types/dual_frame.h"
+#include "vector.h"
+#include "unit_line.h"
+#include "matrix3.h"
+#include "dual_number.h"
+#include "dual_frame.h"
 
 namespace Random {
     Vector SampleVector();

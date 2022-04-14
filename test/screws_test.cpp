@@ -6,15 +6,15 @@
 #include <random>
 #include <chrono>
 
-#include "base/vector.h"
-#include "base/dual_number.h"
-#include "screws/screw.h"
-#include "screws/unit_line.h"
+#include "vector.h"
+#include "dual_number.h"
+#include "screw.h"
+#include "unit_line.h"
 
-#include "embedded_types/dual_embedded_matrix.h"
-#include "embedded_types/dual_frame.h"
-#include "embedded_types/dual_skew.h"
-#include "embedded_types/dual_skew_product.h"
+#include "dual_embedded_matrix.h"
+#include "dual_frame.h"
+#include "dual_skew.h"
+#include "dual_skew_product.h"
 
 #include <gtest/gtest.h>
 

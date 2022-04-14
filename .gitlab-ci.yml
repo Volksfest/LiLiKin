@@ -14,8 +14,7 @@ build:
         - make
     artifacts:
         paths:
-            - ./bin/do_tests
-            - ./bin/dak-example
+            - ./bin/lilikin_tests
 
 test:
     stage: test
@@ -23,7 +22,7 @@ test:
     tags:
         - vserver-shared
     script:
-        - ./bin/do_tests
+        - ./bin/lilikin_tests
 
 docs:
     stage: deploy
