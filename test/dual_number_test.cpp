@@ -86,7 +86,7 @@ TEST(DualNumberAlgebra, Advanced) { //NOLINT
     EXPECT_NEAR_DN(res, DualNumber(M_SQRT1_2, -M_PI_4 * M_SQRT1_2), 0.01);
 
     res = sqrt( (a+b) / 2);
-    EXPECT_NEAR_DN(res, DualNumber(1/M_2_SQRTPIl, M_PI_4 * M_2_SQRTPIl / 2), 0.01);
+    EXPECT_NEAR_DN(res, DualNumber(1/M_2_SQRTPI, M_PI_4 * M_2_SQRTPI / 2), 0.01);
 }
 
 TEST(DualNumberAlgebra, Exception) { //NOLINT
