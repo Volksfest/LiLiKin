@@ -5,7 +5,7 @@ Basic idea is to create a CCC mechanism, which is a fully actuated mechanism in 
 This library provides the basic structures to describe the problem and the FK/IK - algebraically!
 Basically, Pluecker lines, Dual Algebra and advanced operations on the Pluecker lines are used.
 
-![Use-Case diagram](doc/build/use_case.png)
+![Use-Case diagram](https://www.plantuml.com/plantuml/png/PP3RQeGm48RlynHpsLwi3o0YAv6rulPmqmV8wgmRIA9COW-KldidfXInWYJvvfj_O8u-A0gBDI9_zKXGpRFHlGfwSZaKnVODPGdAWvfdOV0Q84n0Uhm563HX7mqHJ-L6Wt3MPzrf1ry2-BkJX2eWI2dX4VkRSjhRUqwBH2Rb1UawaULEXz3WP37G9ppFIEjql-fDSX-K6ymkBWanBZcjUqFo21tdMOxeaz1sgNoQw5tHi2-VVilreWmyBVOITs96l91QwtKbleKGSN9nEApBu1yE9JJfmZTsaf1bd0Svu4T0D_W_s6wXO2NBk9-PThrP1XJjVoHJC_2neGdltRgAvfOSUTHYpGy0)
 
 ## CCC Mechanism
 
