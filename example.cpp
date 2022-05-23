@@ -11,6 +11,8 @@
 
 #include "ccc.h"
 
+#include "random.h"
+
 using namespace DualNumberAlgebra;
 using ReturnType = std::pair<CCCMechanism, DualFrame>;
 
@@ -120,8 +122,22 @@ ReturnType screwed() {
     return {ccc, goal};
 }
 
-int main() {
-    auto [ccc, goal] = coincide();
+ReturnType select(char * input) {
+    if ( strncmp("screwed", input, 9) == 0) {
+        return screwed();
+    } else if ( strncmp("simple_parallel", input, 16) == 0) {
+        return simple_parallel();
+    } else if ( strncmp("parallel", input, 9) == 0) {
+        return parallel();
+    } else if ( strncmp("coincide", input, 9) == 0) {
+        return coincide();
+    } else {
+        throw std::logic_error("");
+    }
+}
+
+void test_scenario(char * input) {
+    auto [ccc, goal] = select(input);
 
     auto solutions = ccc.inverse(goal);
 
@@ -133,6 +149,37 @@ int main() {
                   solution.phi_2 << std::endl <<
                   solution.phi_3 << std::endl;
         std::cout << "yields to:" << std::endl << ccc.forward(solution) << std::endl;
+    }
+}
+
+void test_random() {
+    auto a = Random::SampleLine();
+    std::cout << "a:" << std::endl << a << std::endl;
+
+    auto b = Random::SampleRelatedLine(a, LineRelation::ANTI_COINCIDE);
+    std::cout << "b:" << std::endl << b << std::endl;
+
+    auto [aa,bb,cc] = Random::SampleLineTriplet(LineRelation::PARALLEL, LineRelation::SKEW);
+    std::cout << "Triplet a:" << std::endl << aa << "Triplet b:" << std::endl << bb << "Tiplet Ref:" << std::endl << cc << std::endl;
+}
+
+int main(int argc, char **argv) {
+    try {
+        if (argc == 1) {
+            throw std::logic_error("");
+        }
+
+        if (strncmp("-r", argv[1], 3) == 0) {
+            test_random();
+        } else {
+            test_scenario(argv[1]);
+        }
+    }
+    catch(std::logic_error &e) {
+        std::cerr << "Usage: " << std::endl <<
+                  argv[0] << " " << "-r" << std::endl <<
+                  "or" << std::endl <<
+                  argv[0] << " " << "screwed | simple_parallel | parallel | coincide" << std::endl;
     }
 }
 

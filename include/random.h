@@ -23,6 +23,14 @@ namespace Random {
     DualNumberAlgebra::DualNumber SampleDualNumber();
 
     DualFrame SampleFrame();
+
+    PointVector SamplePoint(double cube_size = 1);
+
+    UnitLine SampleRelatedLine(const UnitLine &a, LineRelation relation);
+
+    std::pair<UnitLine, UnitLine> SampleLinePair(LineRelation relation);
+
+    std::tuple<UnitLine, UnitLine, UnitLine> SampleLineTriplet(LineRelation relation_a_to_b, LineRelation relation_a_to_ref);
 }
 
 #endif //DUAL_ALGEBRA_KINEMATICS_RANDOM_H

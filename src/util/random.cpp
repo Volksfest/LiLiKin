@@ -54,10 +54,14 @@ RotationMatrix Random::SampleOrientation() {
     return RotationMatrix::RotationFromEigen(rot);
 }
 
+PointVector Random::SamplePoint(double cube_size) {
+    return PointVector(cube_size * RandomNumber() * Random::SampleVector());
+}
+
 UnitLine Random::SampleLine() {
     return UnitLine(
-            Random::SampleDirection(),
-            PointVector(5 * RandomNumber() * Random::SampleVector()));
+            SampleDirection(),
+            SamplePoint(5));
 }
 
 DualFrame Random::SampleFrame() {
@@ -68,3 +72,41 @@ DualFrame Random::SampleFrame() {
 DualNumberAlgebra::DualNumber Random::SampleDualNumber() {
     return DualNumberAlgebra::DualNumber(RandomNumber(), RandomNumber());
 }
+
+UnitLine Random::SampleRelatedLine(const UnitLine &a, LineRelation relation) {
+    UnitDirectionVector n = SampleDirection();
+    PointVector anchor = SamplePoint(5);
+
+    if (relation == LineRelation::INTERSECT || relation == LineRelation::ANTI_COINCIDE || relation == LineRelation::COINCIDE) {
+        anchor = a.get_canonical_anchor();
+    }
+
+    if (relation == LineRelation::PARALLEL || relation == LineRelation::COINCIDE) {
+        n = a.n().normal();
+    }
+
+    if (relation == LineRelation::ANTI_COINCIDE || relation == LineRelation::ANTI_PARALLEL) {
+        n = UnitDirectionVector(a.n() * -1);
+    }
+
+    return UnitLine(n, anchor);
+}
+
+
+std::pair<UnitLine, UnitLine> Random::SampleLinePair(LineRelation relation) {
+    UnitLine a = SampleLine();
+
+    return std::make_pair(a, SampleRelatedLine(a, relation));
+}
+
+std::tuple<UnitLine, UnitLine, UnitLine>
+Random::SampleLineTriplet(LineRelation relation_a_to_b, LineRelation relation_a_to_ref) {
+    UnitLine a = SampleLine();
+    UnitLine b = SampleRelatedLine(a, relation_a_to_b);
+    UnitLine ref = SampleRelatedLine(a, relation_a_to_ref);
+
+    return std::make_tuple(a,b, ref);
+}
+
+
+

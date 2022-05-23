@@ -186,6 +186,14 @@ public:
      * @return True if unequal
      */
     friend bool operator!=(const Screw &lhs, const Screw &rhs);
+
+    /**
+     * \brief Pretty print of a screw
+     * @param stream Where to write
+     * @param rhs The printed screw
+     * @return
+     */
+    friend std::ostream &operator<<(std::ostream &stream, const Screw &rhs);
 };
 
 #endif //DUAL_ALGEBRA_KINEMATICS_SCREW_H
