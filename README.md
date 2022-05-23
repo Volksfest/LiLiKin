@@ -1,8 +1,8 @@
 # LiLiKin - Library for Line Kinematics
 
-Basic idea is to create a CCC mechanism, which is a fully actuated mechanism in a 6D Task Space.
+The basic idea is to create a CCC mechanism, which is a fully actuated mechanism in a 6D Task Space.
 
-This library provides the basic structures to describe the problem and the FK/IK - algebraically!
+This library provides the basic structures to describe the problem and the FK/IK, analytically!
 Basically, Pluecker lines, Dual Algebra and advanced operations on the Pluecker lines are used.
 
 ![Use-Case diagram](https://www.plantuml.com/plantuml/png/PP3RQeGm48RlynHpsLwi3o0YAv6rulPmqmV8wgmRIA9COW-KldidfXInWYJvvfj_O8u-A0gBDI9_zKXGpRFHlGfwSZaKnVODPGdAWvfdOV0Q84n0Uhm563HX7mqHJ-L6Wt3MPzrf1ry2-BkJX2eWI2dX4VkRSjhRUqwBH2Rb1UawaULEXz3WP37G9ppFIEjql-fDSX-K6ymkBWanBZcjUqFo21tdMOxeaz1sgNoQw5tHi2-VVilreWmyBVOITs96l91QwtKbleKGSN9nEApBu1yE9JJfmZTsaf1bd0Svu4T0D_W_s6wXO2NBk9-PThrP1XJjVoHJC_2neGdltRgAvfOSUTHYpGy0)
@@ -11,8 +11,7 @@ Basically, Pluecker lines, Dual Algebra and advanced operations on the Pluecker 
 
 A CCC mechanism consists of three cylindrical (C) joints.
 A cylindrical joint has two degree of freedoms
-  as it can translate and rotate around the cylinder main axis,
-  which is considered as the joint axis.
+  as it can translate and rotate around the cylinder's main axis, respectively its joint axis.
 The joint axis can be mathematically described as a line, hence Line Kinematics,
   where points are actuated on the surface of a cylinder around the line.
 Lines can also be transformed by other lines.
@@ -25,20 +24,21 @@ Image from "An analysis of the dual-complex unit circle with applications to lin
 
 The concept of Line Kinematics is based on the product of exponentials:
 
-x = exp(phi_1 * line_1) * exp(phi_2 * line_2) * exp(phi_3 * line_3) * zero_posture
+x = exp(phi_1 * lambda_1) * exp(varphi_2 lambda_2) * exp(varphi_3 lambda_3) * s_zp
 
-Thus, to calculate an FK ({phi_1, phi_2, phi_3} -> x) or an IK (x -> {phi_1, phi_2, phi_3})
+Thus, to compute a FK ({phi_1, phi_2, phi_3} -> x) or an IK (x -> {phi_1, phi_2, phi_3}) with phi_1, phi_2, and phi_3
+  being dual angles containing a translation and rotation information,
   the parameters of the mechanism have to be specified.
-These are the lines (line_1, line_2, line_3) and the zero_posture,
-  which is some kind of an offset to describe ({0,0,0} -> zero_posture).
+The parameters are the joint axes (lines) lambda_1, lambda_2, lambda_3 and the zero posture pose s_zp,
+  which is the initial end-effector pose describing ({0,0,0} -> s_zp).
 
-This means, a mechanism can only be described by its joint axis' and its zero_posture, 
-  which will be needed in the constructor for the mechanism.
+These parameters are necessary to uniquely define a mechanism.
   
 ## Line Geometry
 
 There are different ways to describe a line and a frame. 
-In this library, a mixture of vectors and matrices including some sort of dual algebra is used.
+Right now, a mixture of vectors and matrices including some sort of dual algebra is used, in this library.
+Future works may reduce or seperate different formalisms a bit better. 
 
 ### Dual Matrices
 
@@ -56,37 +56,48 @@ The lines could also be described as a dual 3 vector with the dual part being th
 
 ## Operations
 
-The heart of the library are the operations, which are given by the Pluecker lines.
-Ironically, some operations are not well documented in the community.
-Thus, some of them are formulated while implementing this library.
+The heart of the library are the operation based on or motivated by Pluecker lines.
+
+### Motor product
+
+Initially developed as one motor product by Richard von Mises in 1924, the motor product gives
+the transformation from one line to the other via a transformation defined by a screw.
+
+But seperating the screw into a line and the dual angle is not always uniquely possible.
+Some kind of tricks were developed here to avoid ambiguity.
 
 ### Dual Trigonometric Equation
 
-There are some problems, e.g the Rodriguez-Formula, which can be described with the equation:
+There are some problems which can be described by the equation:
 
 a cos(phi) + b sin(phi) = c
 
 a, b and c are given parameters and the task would be to find phi.
 This yields to an equivalent quadratic equation with at most two solutions, 
-  which can be retrieved algebraically via half-tangens substitutions
+  which can be retrieved analytically via half-tangens substitutions
   or geometrically.
+  
+This equation can also be formulated as dual number problem according to
+Kotelnikov's principle of transference. This is also done by Bongardt in 2020.
   
 See DualNumberAlgebra::solve_trigonometric_equation()
 
 ### Acos3
 
 The acos3 for lines describes the dual angle between two lines
-  with respect to a third reference line.
+  projected to a third reference line as proposed by Bongardt in 2020.
+
 It is used to find phi in:
 
-line_b = exp(phi * line_ref) * line_a
+lambda_b = exp(phi * lambda_ref) * \lambda_a
 
-See Screw::acos3()
+See UnitLine::acos3()
 
-### Rodriguez Formula
+### Rodrigues Formula
 
-Another important operation is the Generalized Rodriguez-Formula for lines to actually compute:
+Another important operation is the Generalized Rodrigues-Formula for lines to actually compute the transformation
+generated by a line lambda and a dual angle phi:
 
-exp(phi * line)
+exp(phi * lambda)
 
 See DualFrame::DualFrame(const DualSkewProduct &argument)
