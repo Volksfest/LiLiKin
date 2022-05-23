@@ -6,6 +6,8 @@
 
 #include "precision.h"
 
+#include <iomanip>
+
 DualFrame::DualFrame(const Mat6 &mat) noexcept: DualEmbeddedMatrix(mat) {}
 
 DualFrame::DualFrame(const RotationMatrix &rot, const PointVector &trans) noexcept:
@@ -56,13 +58,17 @@ std::ostream &operator<<(std::ostream &stream, const DualFrame &d) {
     auto ps = d.data.bottomLeftCorner(3,3) * R.inverse();
     Eigen::Matrix<double,3,1> p;
     p << ps(2,1), ps(0,2), ps(1,0);
+    stream << std::fixed;
+    stream << "┌─────────────────────────────────┬───────────┐" << std::endl;
     for( int i = 0; i < 3; i++) {
-        stream << " ";
+        stream << "│";
         for (int j = 0; j < 3; j++) {
-            stream << R(i,j) << " ";
+            stream << std::setw(10) << R(i,j) << " ";
         }
-        stream << "\t" << p(i) << std::endl;
+        stream << "│" << std::setw(10) << p(i) << " │" << std::endl;
     }
+    stream << "└─────────────────────────────────┴───────────┘" << std::endl;
+    stream << std::defaultfloat;
     return stream;
 }
 
