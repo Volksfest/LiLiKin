@@ -90,9 +90,9 @@ std::ostream &operator<<(std::ostream &stream, const Screw &rhs) {
     auto n = rhs.n().get();
     auto m = rhs.m().get();
 
-    stream << "┌" << std::setw(10) << n[0] << " ┐" << "    " << "┌" << std::setw(10) << m[0] << " ┐" << std::endl;
-    stream << "│" << std::setw(10) << n[1] << " │" << " +ϵ " << "│" << std::setw(10) << m[1] << " │" << std::endl;
-    stream << "└" << std::setw(10) << n[2] << " ┘" << "    " << "└" << std::setw(10) << m[2] << " ┘" << std::endl;
+    stream << "⎛" << std::setw(10) << n[0] << " ⎞" << "    " << "⎛" << std::setw(10) << m[0] << " ⎞" << std::endl;
+    stream << "⎜" << std::setw(10) << n[1] << " ⎟" << " +ϵ " << "⎜" << std::setw(10) << m[1] << " ⎟" << std::endl;
+    stream << "⎝" << std::setw(10) << n[2] << " ⎠" << "    " << "⎝" << std::setw(10) << m[2] << " ⎠" << std::endl;
 
 
 
