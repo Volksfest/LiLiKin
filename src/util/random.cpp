@@ -108,5 +108,26 @@ Random::SampleLineTriplet(LineRelation relation_a_to_b, LineRelation relation_a_
     return std::make_tuple(a,b, ref);
 }
 
+std::tuple<UnitLine, UnitLine, UnitLine>
+Random::SamplePlanarLineTriplet(bool intersecting_a_b, bool intersecting_a_ref) {
+    UnitLine a = SampleLine();
+    UnitLine b = SampleRelatedLine(a, intersecting_a_b? LineRelation::INTERSECT : LineRelation::SKEW);
 
+    double alpha = RandomNumber() - 0.5;
+    double beta = RandomNumber() - 0.5;
 
+    return std::make_tuple(
+            a,
+            b,
+            // create the third line which has a planar direction
+            UnitLine(
+                    // planarity is given by a random composition of the other both directions
+                    DirectionVector(alpha * a.n() + beta * b.n()).normal(),
+                    // if a shall intersect with reference than the same anchor is used
+                    // otherwise a random anchor will be sampled
+                    intersecting_a_ref?
+                        a.get_canonical_anchor():
+                        SamplePoint(5)
+                    )
+            );
+}

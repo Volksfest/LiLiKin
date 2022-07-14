@@ -31,6 +31,8 @@ namespace Random {
     std::pair<UnitLine, UnitLine> SampleLinePair(LineRelation relation);
 
     std::tuple<UnitLine, UnitLine, UnitLine> SampleLineTriplet(LineRelation relation_a_to_b, LineRelation relation_a_to_ref);
+
+    std::tuple<UnitLine, UnitLine, UnitLine> SamplePlanarLineTriplet(bool intersecting_a_b, bool intersecting_a_ref);
 }
 
 #endif //DUAL_ALGEBRA_KINEMATICS_RANDOM_H
