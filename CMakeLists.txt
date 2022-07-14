@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-add_library(lilikin
+set(SOURCE
         src/ccc.cpp
 
         src/base/dual_number.cpp
@@ -26,6 +26,10 @@ add_library(lilikin
 
         src/util/random.cpp
         )
+
+add_library(lilikin
+        ${SOURCE}
+        )
 set_target_properties(lilikin PROPERTIES PUBLIC_HEADER
         "include/ccc.h;include/dual_number.h;include/vector.h;include/matrix3.h;include/screw.h;include/unit_line.h;include/dual_embedded_matrix.h;include/dual_frame.h;include/dual_skew.h;include/dual_skew_product.h;include/random.h;include/precision.h;include/lilikin.h")
 target_include_directories(lilikin PRIVATE include)
@@ -38,17 +42,30 @@ add_executable(exlikin
 target_include_directories(exlikin PRIVATE include)
 target_link_libraries(exlikin PRIVATE lilikin)
 
+### Shared Lib (optional)
+
+# Needed so the install target only installs the shared lib if it is build
+SET(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
+
+# Could use the same precompiled objects with the static but I like the static library to be non PIC
+add_library(lilikin_shared SHARED EXCLUDE_FROM_ALL
+        ${SOURCE})
+target_include_directories(lilikin_shared PRIVATE include)
+target_link_libraries(lilikin_shared Eigen3::Eigen)
+
 ### Install
 
-install(TARGETS lilikin exlikin
+install(TARGETS lilikin lilikin_shared exlikin
         ARCHIVE
         DESTINATION lib
+        LIBRARY
+        DESTINATION lib
+        OPTIONAL
         RUNTIME
         DESTINATION bin
         PUBLIC_HEADER
         DESTINATION include/lilikin
         )
-
 
 ### Test
 
@@ -63,7 +80,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
     target_include_directories(lilikin_tests PRIVATE include)
     target_link_libraries(lilikin_tests gtest_main lilikin)
 
-    message(STATUS "Googletest cloned. Will also create tests. Run them with:")
+    message(STATUS "Googletest cloned. Will also create tests. After build, run them with:")
     message(STATUS "    ./lilikin_tests")
 else()
     message(STATUS "Googletest not cloned. Tests will be omitted!")
@@ -90,3 +107,8 @@ if(${DOXYGEN_FOUND})
 elseif()
     message(STATUS "Doxygen not found. Docs cannot be build!")
 endif()
+
+### Additional messages
+
+message(STATUS "If you need a shared object you will have to build it separately:")
+message(STATUS "    make lilikin_shared")
