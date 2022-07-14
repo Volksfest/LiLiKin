@@ -123,6 +123,15 @@ public:
     Screw orthogonal(const Screw &l) const;
 
     /**
+     * \brief Create the ordered orthogonal between two screws
+     *
+     * \exception std::domain_error If the lines are coinciding, there is no orthogonal.
+     * @param l Screw to find the common orthogonal which definitively intersects this line first and then l.
+     * @return The common orthogonal from this to l
+     */
+    Screw ordered_orthogonal(const Screw &l) const;
+
+    /**
      * \brief Create the rejection of a screw in respect to this line
      *
      * \exception std::domain_error If the lines are coinciding, there is no rejection.

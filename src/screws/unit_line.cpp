@@ -248,3 +248,19 @@ PointVector UnitLine::orthogonal_plane_projection(const PointVector &plane_ancho
     return PointVector(point - diff.norm() * sign * this->n());
 }
 
+Screw UnitLine::ordered_orthogonal(const Screw &l) const {
+    Screw orth = this->orthogonal(l);
+
+    UnitLine ul = l.to_line();
+
+    auto l_to_t = this->point_project(ul);
+    auto t_to_l = ul.point_project(*this);
+
+    double dot = (t_to_l - l_to_t) * orth.n();
+    if (dot >= 0) {
+        return orth;
+    } else {
+        return -orth;
+    }
+}
+
