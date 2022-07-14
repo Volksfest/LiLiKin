@@ -137,6 +137,14 @@ public:
     double norm() const noexcept;
 
     /**
+     * \brief Calculate the squared norm of the vector
+     *
+     * More efficient than to calculate the norm which is the square root of this
+     * @return The squared norm of the vector
+     */
+    double squared_norm() const noexcept;
+
+    /**
      * \brief Cacluate the normalized vector
      *
      * \exception std::logic_error If the norm is zero

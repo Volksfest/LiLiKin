@@ -100,11 +100,20 @@ Screw UnitLine::projection(const Screw &l, const Screw *rejection) const noexcep
 }
 
 PointVector UnitLine::point_project(const UnitLine &l) const noexcept {
-    auto d = l.get_canonical_anchor() - this->get_canonical_anchor();
-    // Probably, the point projection gets expensive but this makes it stable and without any consideration of cases
-    auto n = this->line_cross(l);
+    auto txl = cross(this->n(), l.n());
+
+    if (txl.is_zero()) {
+        return this->get_canonical_anchor();
+    }
+    double txl_sqn = txl.squared_norm();
+
     return PointVector(
-            this->get_canonical_anchor() - (l.n().cross(l.n().cross(this->n())) * d / (n*n)) * this->n());
+            this->get_canonical_anchor()
+            // Paranthesis are important as * is not associative here
+            // the first * is a vector scaling, the second * is a dot product
+            // The third * is also a dot product but the forth * is again a vector scaling
+            - this->n() * ( txl / txl_sqn * ( (this->n() * l.n()) * this->m() - l.m() ) )
+    );
 }
 
 UnitLine UnitLine::parallel_through_anchor(const PointVector &new_anchor) const noexcept {

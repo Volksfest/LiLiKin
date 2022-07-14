@@ -68,6 +68,11 @@ Vector::norm() const noexcept {
     return this->data.norm();
 }
 
+double
+Vector::squared_norm() const noexcept {
+    return this->data.squaredNorm();
+}
+
 Vector
 Vector::normal() const {
     return *this / this->norm();
