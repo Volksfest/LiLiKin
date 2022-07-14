@@ -19,46 +19,38 @@ sgn(double x) {
 // generic case
 DualNumber
 acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
+    // As nothing is parallel to n the rejections definitively exist
     UnitLine rejection_a = n.rejection(a).to_line();
     UnitLine rejection_b = n.rejection(b).to_line();
 
-    double dot_prod = n.n() * cross(a.n(), b.n());
-    double ornt = sgn(dot_prod);
+    // Compute the orientiation of rotation by the triple product
+    // This may be 0 and thus yield to unprecise sign determination
+    // But it is not critical as it also means a half-circle rotation where the direction is completely irrelevant
+    double ornt_angle = sgn( n.n() * cross(a.n(), b.n()) );
+    // This computes the distance of the rejection containing orthogonal plane to n
+    double plane_d_a = n.n() * rejection_a.get_canonical_anchor();
+    double plane_d_b = n.n() * rejection_b.get_canonical_anchor();
+    // The sign of the difference gives us the direction of the translation
+    double ornt_trans = sgn( plane_d_b - plane_d_a);
 
-    // if a and b are nearly parallel, the sign is hard to compute with the cross product
-    // thus calculate the difference of the intersection which should be aligned to the normals direction
-    // otherwise it is negative
-    if( Compare::is_zero(dot_prod) ) {
-        ornt = -sgn ( (n.intersect(rejection_b) - n.intersect(rejection_a)) * n.n() );
-    }
-    return rejection_a.get_distance(rejection_b) * ornt;
-}
+    // Compute the dual angle
+    // Unfortunately, the sign of the dual part is relatively unusable
+    auto dual_angle = rejection_a.get_distance(rejection_b);
 
-//only translation or 180 Degrees
-DualNumber
-acos3_parallel_lines(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-    auto point_projection_a = n.point_project(a);
-    auto point_projection_b = n.point_project(b);
-
-    auto projection_diff = point_projection_b - point_projection_a;
-
-    //double ornt = sgn(n.n() * projection_diff);
-
-    double diff = n.n() * projection_diff;
-
-    // a_n and b_n are parallel, thus the product can only be +1 or -1
-    // Depended on that there is a 180° rotation or not
-    // the rest is just a translation as the two lines are parallel
-    //return DualNumber(a.n() * b.n() > 0 ? 0.0 : M_PI, projection_diff.norm() * ornt);
-    return DualNumber(a.n() * b.n() > 0 ? 0.0 : M_PI, diff);
+    // Thus, create a new dual angle where the individual signs utilized
+    // The dual part always is signed and thus the absolute value is used
+    return DualNumber(
+            ornt_angle * dual_angle.real(),
+            ornt_trans * abs(dual_angle.dual())
+            );
 }
 
 // only rotation
 DualNumber
 acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-    // Just in this special case, either a or b can be coincident to n
-    // in that case any kind of meaningful projection is not possible and throws an exception
-    // with the exception received the coincident case is catched and no transformation (0+0ϵ) is returned (as the lines are coinciding already)
+    // If either a or b is coincident to n the orthogonal is also non-computable
+    // In that case any kind of meaningful projection is not possible and throws an exception
+    // With the exception received the coincident case is catched and no transformation (0+0ϵ) is returned (as the lines are coinciding already)
     try {
         auto a_pro_o = n.orthogonal(a).to_line();
         auto b_pro_o = n.orthogonal(b).to_line();
@@ -81,29 +73,15 @@ acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n
 
 DualNumber
 UnitLine::acos3(const UnitLine &a, const UnitLine &b) const noexcept {
-    bool ab_parallel = Compare::is_equal(abs(a.n() * b.n()), 1.0);
     bool an_parallel = Compare::is_equal(abs(a.n() * this->n()), 1.0);
     bool bn_parallel = Compare::is_equal(abs(b.n() * this->n()), 1.0);
 
-    // Check for "Generic case" - everthing is skewed
-    if (!ab_parallel && !an_parallel && !bn_parallel) {
+    if (!an_parallel && !bn_parallel) {
         return acos3_generic(a, b, *this);
 
-    // something is parallel
-    } else {
-
-        // lines are parallel but not to reference
-        // yields in only translation
-        if (!an_parallel && !bn_parallel) {
-            return acos3_parallel_lines(a, b, *this);
-
         // at least one line is parallel to the reference yielding to a non possible rejection
-        // thus the orthogonals are used
-
-        // disclaimer: both lines have to be parallel to the reference
-        // a single line parallel to the reference simple makes no sense and will result to something unexpected
-        } else {
-            return acos3_missing_rejections(a, b, *this);
-        }
+        // thus the orthogonals are used instead
+    } else {
+        return acos3_missing_rejections(a, b, *this);
     }
 }
