@@ -256,6 +256,13 @@ namespace DualNumberAlgebra {
         return (lhs.real() == rhs.real()) && (lhs.dual() == rhs.dual());
     }
 
+    bool
+    eq_angle(const DualNumber &lhs, const DualNumber &rhs, double eps_p, double eps_d) noexcept {
+        double n = (lhs.real() - rhs.real()) / (2 * M_PI);
+        double delta = std::abs(n - std::floor(n));
+        return delta < eps_p && (std::abs(lhs.dual() - rhs.dual()) < eps_d);
+    }
+
     namespace literals{
         DualNumber
         operator ""_s(long double dual) noexcept {

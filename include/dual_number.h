@@ -299,6 +299,14 @@ namespace DualNumberAlgebra {
      */
     bool operator==(const DualNumber &a, const DualNumber &b) noexcept;
 
+    /**
+         * \brief Test equality of a dual angle
+         *
+         * Also consider 2 pi multiplicity
+         * @return
+         */
+    bool eq_angle(const DualNumber &lhs, const DualNumber &rhs, double eps_p = 1e-8, double eps_d = 1e-8) noexcept;
+
     // const literals to write dual numbers more beautiful
 
     /**

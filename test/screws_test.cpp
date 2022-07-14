@@ -19,8 +19,7 @@
 #include <gtest/gtest.h>
 
 #define EXPECT_NEAR_DN(x, y, e) \
-EXPECT_NEAR((x).real(), (y).real(), e);\
-EXPECT_NEAR((x).dual(), (y).dual(), e)
+EXPECT_TRUE(eq_angle(x,y,e,e))
 
 using namespace DualNumberAlgebra;
 using namespace DualNumberAlgebra::literals;
