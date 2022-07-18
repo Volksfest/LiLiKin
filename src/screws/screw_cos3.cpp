@@ -19,23 +19,27 @@ sgn(double x) {
 // generic case
 DualNumber
 acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
-    // As nothing is parallel to n the rejections definitively exist
-    UnitLine rejection_a = n.rejection(a).to_line();
-    UnitLine rejection_b = n.rejection(b).to_line();
+    // As nothing is parallel to n the orthogonals definitively exist
+    UnitLine orthogonal_a = n.orthogonal(a).to_line();
+    UnitLine orthogonal_b = n.orthogonal(b).to_line();
 
     // Compute the orientiation of rotation by the triple product
     // This may be 0 and thus yield to unprecise sign determination
-    // But it is not critical as it also means a half-circle rotation where the direction is completely irrelevant
+    // But it is not critical as it also means a half-circle rotation where the sign is completely irrelevant
     double ornt_angle = sgn( n.n() * cross(a.n(), b.n()) );
-    // This computes the distance of the rejection containing orthogonal plane to n
-    double plane_d_a = n.n() * rejection_a.get_canonical_anchor();
-    double plane_d_b = n.n() * rejection_b.get_canonical_anchor();
+    // This computes the distance of the orthogonal containing orthogonal plane to n
+    // Differently explained: This gives the constant offset of a Hesse normal form
+    // The orthogonal is obviously orthogonal to the line direction and thus inside a orthogonal plane
+    double plane_d_a = n.n() * orthogonal_a.get_canonical_anchor();
+    double plane_d_b = n.n() * orthogonal_b.get_canonical_anchor();
     // The sign of the difference gives us the direction of the translation
+    // The difference is actually the translation along n
+    // TODO: Thus it could make sense to change the acos3 computation even more?
     double ornt_trans = sgn( plane_d_b - plane_d_a);
 
     // Compute the dual angle
     // Unfortunately, the sign of the dual part is relatively unusable
-    auto dual_angle = rejection_a.get_distance(rejection_b);
+    auto dual_angle = orthogonal_a.get_distance(orthogonal_b);
 
     // Thus, create a new dual angle where the individual signs utilized
     // The dual part always is signed and thus the absolute value is used
@@ -47,21 +51,20 @@ acos3_generic(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept 
 
 // only rotation
 DualNumber
-acos3_missing_rejections(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
+acos3_without_translation(const UnitLine &a, const UnitLine &b, const UnitLine &n) noexcept {
     // If either a or b is coincident to n the orthogonal is also non-computable
     // In that case any kind of meaningful projection is not possible and throws an exception
     // With the exception received the coincident case is catched and no transformation (0+0ϵ) is returned (as the lines are coinciding already)
     try {
-        auto a_pro_o = n.orthogonal(a).to_line();
-        auto b_pro_o = n.orthogonal(b).to_line();
+        auto orthogonal_a = n.orthogonal(a).to_line();
+        auto orthogonal_b = n.orthogonal(b).to_line();
 
-        double ornt = sgn(
-                n.n() * cross(a_pro_o.n(), b_pro_o.n()) );
+        double ornt = sgn( n.n() * cross(orthogonal_a.n(), orthogonal_b.n()) );
 
         // thanks to floating point precision the arg can be greater or lesser than 1 or -1 respectively.
         // Unfortunately, the acos cannot be calculated then.
         // Thus, the argument is trimmed inside the domain
-        auto arg = a_pro_o.n() * b_pro_o.n();
+        auto arg = orthogonal_a.n() * orthogonal_b.n();
         if ( arg < -1) {arg = -1;}
         if ( arg >  1) {arg =  1;}
         // real acos not dual acos!
@@ -79,9 +82,8 @@ UnitLine::acos3(const UnitLine &a, const UnitLine &b) const noexcept {
     if (!an_parallel && !bn_parallel) {
         return acos3_generic(a, b, *this);
 
-        // at least one line is parallel to the reference yielding to a non possible rejection
-        // thus the orthogonals are used instead
+        // at least one line is parallel to the reference yielding to a non useful translation
     } else {
-        return acos3_missing_rejections(a, b, *this);
+        return acos3_without_translation(a, b, *this);
     }
 }
