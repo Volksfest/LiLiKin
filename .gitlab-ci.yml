@@ -15,6 +15,8 @@ build:
     artifacts:
         paths:
             - ./bin/lilikin_tests
+            - ./bin/exlikin
+            - ./bin/liblilikin.a
 
 test:
     stage: test
