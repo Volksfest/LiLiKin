@@ -80,6 +80,21 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
     target_include_directories(lilikin_tests PRIVATE include)
     target_link_libraries(lilikin_tests gtest_main lilikin)
 
+    ### Coverage # Only in Debug
+
+    if(CMAKE_BUILD_TYPE MATCHES Debug)
+        set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
+        include(CodeCoverage)
+        append_coverage_compiler_flags()
+
+        setup_target_for_coverage_gcovr_html(
+            NAME coverage_test
+            EXECUTABLE ./lilikin_tests
+            DEPENDENCIES lilikin_tests
+            BASE_DIRECTORY ${PROJECT_SOURCE_DIR}
+            EXCLUDE "${PROJECT_SOURCE_DIR}/googletest" "${PROJECT_SOURCE_DIR}/example.cpp")
+    endif()
+
     message(STATUS "Googletest cloned. Will also create tests. After build, run them with:")
     message(STATUS "    ./lilikin_tests")
 else()
