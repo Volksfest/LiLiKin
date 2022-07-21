@@ -58,6 +58,28 @@ std::unordered_map<std::string, DataSet> examples = {
                         PointVector(15, 0, 0)
                 ))
         },
+        {"coincide2", DataSet(
+                UnitLine(
+                        UnitDirectionVector(0.0, 0.0, 1.0),
+                        PointVector(0.0, 0.0, 0.0)
+                ),
+                UnitLine(
+                        UnitDirectionVector(1.0, 0.0, 0.0),
+                        PointVector(0.0, -1.0, 0.0)
+                ),
+                UnitLine(
+                        DirectionVector(0.0, 0.0, 1.0),
+                        PointVector(5.0, 0.0, 0.0)
+                ),
+                DualFrame(
+                        RotationMatrix(0, 0, 0),
+                        PointVector(6, 1, 0)
+                ),
+                DualFrame(
+                        RotationMatrix(0, 0, 0),
+                        PointVector(1, 1, 0)
+                ))
+        },
         {"parallel", DataSet(
                 UnitLine(
                         UnitDirectionVector(0.0, 0.0, 1.0),
