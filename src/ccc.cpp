@@ -43,7 +43,7 @@ CCCMechanism::inverse(const DualFrame &pose) const {
     // Calculate parameters regarding the rodriguez formula
     DualNumber a = this->l12 * (uniterm * this->l34);
     DualNumber b = this->l12 * (crossterm * this->l34);
-    DualNumber c = this->l12 * ((s - squareterm) * this->l34);
+    DualNumber c = this->l12 * ((s - squareterm) * this->l34); // TODO simplify
 
     // Calculate phi_2 as the trigonometric solutions of a cos + b sin = c
     std::vector<DualNumber> phi2_solutions = solve_trigonometric_equation(a, b, c);
@@ -52,13 +52,41 @@ CCCMechanism::inverse(const DualFrame &pose) const {
     // This will result in annoying special cases
     LineRelation parallelity = this->l12.get_relation_to(s * this->l34);
 
+    // Premodifier
+    // As we are manipulating phi2_solutions, we use classical array access instead of nice fancy for-ranges :(
+    // Maybe not the best way... TODO improve?
+    for (int i = 0; i < phi2_solutions.size(); i++) {
+        // 180° rotations have to be considered separately
+        if (parallelity == LineRelation::ANTI_COINCIDE || parallelity== LineRelation::ANTI_PARALLEL) {
+            phi2_solutions[i] +=  M_PI;
+        }
+
+        // atan2 with a solution of primal zero is not solveable right now
+        // This happens in parallel cases and thus needs extra care
+        if (parallelity == LineRelation::PARALLEL || parallelity== LineRelation::ANTI_PARALLEL) {
+            DualFrame pre_rot(DualSkewProduct(this->l23, phi2_solutions[i].real()));
+            auto l3i = pre_rot * this->l34;
+            auto l3f = s * this->l34;
+
+            double tri_b = abs(this->l12.get_distance(l3i).dual());
+            double tri_c = abs(this->l12.get_distance(l3f).dual());
+
+            // Here can actually be seen that to the first atan2 a second pure dual atan2 will be added/substracted
+            // The "length" has to be the  dual part of the atan2 solution which cannot be retrieved.
+            double p_2 = phi2_solutions[i].dual();
+            double length = sqrt(p_2 * p_2 - tri_b * tri_b + tri_c * tri_c);
+
+            // Make the actual two solutions of the only one in the parallel case
+            phi2_solutions.push_back(phi2_solutions[i] + DualNumber(0, length));
+            phi2_solutions[i] += DualNumber(0, -length);
+            // Probably needed as the size increases. Not the best solution. It should really be improved...
+            break;
+        }
+    }
+
     // Container for the solutions
     std::vector<Configuration> solutions;
     for (auto phi_2 : phi2_solutions) {
-        // 180° rotations have to be considered separately
-        if (parallelity == LineRelation::ANTI_COINCIDE || parallelity== LineRelation::ANTI_PARALLEL) {
-            phi_2 = phi_2 + M_PI;
-        }
         // M2 can be calculated already and is the same in all cases
         DualFrame m2(DualSkewProduct(this->l23, phi_2));
 
@@ -90,97 +118,12 @@ CCCMechanism::inverse(const DualFrame &pose) const {
 
             // Parallel
             } else {
-                // Calculate the angles as usual first
-                // These calculations will give the correct angles
-                //   but unfortunately not the correct translations as they are not unique
                 auto phi_1 = this->l12.acos3(m2 * this->l34, s * this->l34);
                 auto phi_3 = this->l34.acos3(s.inverse() * this->l12, m2.inverse() * this->l12);
 
-                // Calculate the only rotation displacements
-                // As Line 1 and Line 3 will be parallel the rotations will be summed up in Line 1
-                // This yields to different translational displacement but has no effect on the orientation
-                DualFrame m1_combined(DualSkewProduct(this->l12,(phi_1 + phi_3).real()));
-                DualFrame m2_rot(DualSkewProduct(this->l23, phi_2.real()));
-
-                // Calculate a new zero posture which already has the correct orientation
-                // Thus, the translational displacement of this pose has to be finded
-                auto pre_pose = m1_combined * m2_rot * this->zero_posture;
-
-                // We are using some kind of a Paden-Kahan problem
-                // The problem is projected to an arbitrary plane (we just use the canonical anchor) orthogonal to Line 1/3
-                PointVector anchor = this->l12.get_canonical_anchor();
-                // The target and the new zero posture pose is projected to the plane
-                PointVector p_target = this->l12.orthogonal_plane_projection(anchor,pose.p());
-                PointVector p_begin = this->l12.orthogonal_plane_projection(anchor, (pre_pose).p());
-
-                // We also define a new origin, which is also the canonical anchor
-                PointVector o_o = this->l12.get_canonical_anchor();
-                // We will have a second rotational center, which is the intersection of Line 3 with the plane
-                // The intersection is calculated by projecting the origin to Line 3
-                // The intersection is the closest point to any point on the plane
-                PointVector o_r = (m1_combined * m2_rot * this->l34).point_project(o_o);
-
-                // By calculating p_t = Rot_o(-phi) * Trans_n(alpha) * Rot(phi) * p_b
-                // we receive the needed translational displacements inside the plane
-                // Thus we need phi, the angle to rotate around Line 1 and counter-rotate around Line 3
-                // and we need alpha, the translation around Line 2 (given by n)
-                // The counter-rotation on Line 3 is needed to hold the correct orientation
-                // By reducing the above formula we get:
-                // p_t = p_b - o + Rot(phi) (o + alpha * n)
-                // This has to be solved for alpha and phi
-
-                // This p is acually p_t - p_b making the formula above easier
-                Vector p = p_target - p_begin;
-                // The rotation center by the new origin o_o
-                Vector o = o_r - o_o;
-                // The direction of Line 2 after the pre orientational displacements
-                Vector n = (m1_combined * this->l23).n();
-                // The orthogonal of the plane
-                Vector w = this->l12.n();
-
-                // Reformulation above with p yields to:
-                // p + o = Rot(phi) (o + alpha * n)
-                // The rotation will conserve any vector length, thus:
-                // || p + o || = || o + alpha * n ||
-                // alpha needs to be calculated such that the length are the same
-                // This yields to a quadratic equation
-                double minus_p_2 = -(n * o);
-                double q = - (p * ( p + 2 * o));
-                double sq = sqrt(minus_p_2 * minus_p_2 - q);
-                if (std::isnan(sq)) sq = 0;
-                // yielding to two solutions!
-                std::vector<double> alphas = {minus_p_2 - sq, minus_p_2 + sq};
-
-                // For each alpha we can now solve a Paden-Kahan problem of the first kind to get phi
-                // v is the target projected vector for the Paden-Kahan problem
-                Vector v = p + o;
-                for (double alpha : alphas) {
-                    // u is the starting projected vector for the Paden-Kahan problem which is dependend on alpha
-                    Vector u = o + alpha * n;
-                    // The result of the Paden-Kahan problem
-                    double phi_off = atan2(w * cross(u,v), u * v);
-
-                    // The last translation is given by the orthogonal translation to the plane
-                    // The only translation outside the plane is given by the rotation around Line 2
-                    // considering that and projecting all the points to Line 1, the offset can be calculated
-                    auto tmp_translation = this->l12.point_project(pose.p()) - this->l12.point_project((m2 * this->zero_posture).p());
-                    // The projection does not take into account in which direction the Line (actually spear) looks
-                    // Thus it has to be considered additionally
-                    double translation_off = tmp_translation.norm() * (tmp_translation * this->l12.n() > 0 ? 1.0 : -1.0);
-
-                    DualNumber corrected_phi_2(phi_2.real(), alpha);
-                    // Actually, it should be enough to set phi_3 as the counter-rotation of Line 1 being -phi_off
-                    // But unfortunately, Through the parallelity there are additionally offsets not considered
-                    // To make it easy, just calculate the simple acos3 between what we have and what we should have
-                    DualFrame m2_n(DualSkewProduct(this->l23, corrected_phi_2));
-                    auto corrected_phi_3 = this->l34.acos3(s.inverse() * this->l12, m2_n.inverse() * this->l12);
-
-                    solutions.push_back({
-                        phi_1 + phi_3 + DualNumber(phi_off, translation_off),
-                        corrected_phi_2,
-                        corrected_phi_3
-                    });
-                }
+                DualFrame pseudo_pose = this->forward({phi_1, phi_2, phi_3});
+                auto d = (pose.p() - pseudo_pose.p()) * this->l12.n();
+                solutions.push_back({phi_1 + DualNumber(0,d), phi_2, phi_3});
             }
         }
     }
