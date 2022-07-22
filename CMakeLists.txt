@@ -97,6 +97,8 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
 
     message(STATUS "Googletest cloned. Will also create tests. After build, run them with:")
     message(STATUS "    ./lilikin_tests")
+    message(STATUS "Coverage test can be invoked with:")
+    message(STATUS "    ./make coverage_test")
 else()
     message(STATUS "Googletest not cloned. Tests will be omitted!")
 endif()
