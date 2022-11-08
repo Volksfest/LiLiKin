@@ -25,50 +25,42 @@ namespace DualNumberAlgebra {
 
     double (*real_sqrt)(double) = std::sqrt;
 
-    DualNumber
-    DualNumber::operator+(const DualNumber &rhs) const noexcept {
+    DualNumber DualNumber::operator+(const DualNumber &rhs) const noexcept {
         return DualNumber(this->_real + rhs._real, this->_dual + rhs._dual);
     }
 
-    DualNumber &
-    DualNumber::operator+=(const DualNumber &rhs) noexcept {
+    DualNumber & DualNumber::operator+=(const DualNumber &rhs) noexcept {
         this->_real += rhs._real;
         this->_dual += rhs._dual;
         return *this;
     }
 
-    DualNumber
-    DualNumber::operator*(const DualNumber &rhs) const noexcept {
+    DualNumber DualNumber::operator*(const DualNumber &rhs) const noexcept {
         return DualNumber(this->_real * rhs._real, this->_dual * rhs._real + this->_real * rhs._dual);
     }
 
-    DualNumber &
-    DualNumber::operator*=(const DualNumber &rhs) noexcept {
+    DualNumber & DualNumber::operator*=(const DualNumber &rhs) noexcept {
         this->_real *= rhs._real;
         this->_dual *= rhs._dual;
         return *this;
     }
 
 
-    DualNumber
-    DualNumber::operator-(const DualNumber &rhs) const noexcept {
+    DualNumber DualNumber::operator-(const DualNumber &rhs) const noexcept {
         return DualNumber(this->_real - rhs._real, this->_dual - rhs._dual);
     }
 
-    DualNumber
-    DualNumber::operator-() const noexcept {
+    DualNumber DualNumber::operator-() const noexcept {
         return DualNumber(-this->_real, -this->_dual);
     }
 
-    DualNumber &
-    DualNumber::operator-=(const DualNumber &rhs) noexcept {
+    DualNumber & DualNumber::operator-=(const DualNumber &rhs) noexcept {
         this->_real -= rhs._real;
         this->_dual -= rhs._dual;
         return *this;
     }
 
-    DualNumber
-    DualNumber::operator/(const DualNumber &rhs) const {
+    DualNumber DualNumber::operator/(const DualNumber &rhs) const {
         if (rhs._real == 0) {
             throw std::logic_error("Cannot divide by (a real part equal to) zero");
         }
@@ -76,8 +68,7 @@ namespace DualNumberAlgebra {
                           this->_dual / rhs._real - this->_real * rhs._dual / rhs._real / rhs._real);
     }
 
-    DualNumber &
-    DualNumber::operator/=(const DualNumber &rhs) {
+    DualNumber & DualNumber::operator/=(const DualNumber &rhs) {
         if (rhs._real == 0) {
             throw std::logic_error("Cannot divide by (a real part equal to) zero");
         }
@@ -87,82 +78,69 @@ namespace DualNumberAlgebra {
         return *this;
     }
 
-    DualNumber
-    DualNumber::conjugate() const noexcept {
+    DualNumber DualNumber::conjugate() const noexcept {
         return DualNumber(this->_real, -this->_dual);
     }
 
-    DualNumber
-    DualNumber::inverse() const {
+    DualNumber DualNumber::inverse() const {
         if (this->_real == 0) {
             throw std::logic_error("Cannot invert (a dual number with real part equals to) zero");
         }
         return DualNumber(1 / this->_real, -this->_dual / this->_real / this->_real);
     }
 
-    double
-    DualNumber::norm() const noexcept {
+    double DualNumber::norm() const noexcept {
         return this->_real >= 0 ? this->_real : -this->_real;
     }
 
-    double
-    DualNumber::norm_square() const noexcept {
+    double DualNumber::norm_square() const noexcept {
         return this->_real * this->_real;
     }
 
-    double
-    DualNumber::real() const noexcept {
+    double DualNumber::real() const noexcept {
         return this->_real;
     }
 
-    double
-    DualNumber::dual() const noexcept {
+    double DualNumber::dual() const noexcept {
         return this->_dual;
     }
 
-    bool
-    DualNumber::is_zero() const noexcept {
+    bool DualNumber::is_zero() const noexcept {
         return Compare::is_zero(this->_real) && Compare::is_zero(this->_dual);
     }
 
-    DualNumber
-    sqrt(const DualNumber &x) noexcept {
+    DualNumber sqrt(const DualNumber &x) noexcept {
         auto root = real_sqrt(x.real());
         return DualNumber(
                 root,
                 0.5 * x.dual() / root);
     }
 
-    DualNumber
-    sin(const DualNumber &phi) noexcept {
+    DualNumber sin(const DualNumber &phi) noexcept {
         return DualNumber(
                 real_sin(phi.real()),
                 phi.dual() * real_cos(phi.real()));
     }
 
-    DualNumber
-    asin(const DualNumber &w) noexcept {
+    DualNumber asin(const DualNumber &w) noexcept {
         return DualNumber(
                 real_asin(w.real()),
                 w.dual() / real_sqrt(1 - w.real() * w.real()));
     }
 
-    DualNumber
-    cos(const DualNumber &phi) noexcept {
+    DualNumber cos(const DualNumber &phi) noexcept {
         return DualNumber(
                 real_cos(phi.real()),
                 -phi.dual() * real_sin(phi.real()));
     }
 
-    DualNumber
-    acos(const DualNumber &w) noexcept {
+    DualNumber acos(const DualNumber &w) noexcept {
         return DualNumber(
                 real_acos(w.real()),
                 -w.dual() / real_sqrt(1 - w.real() * w.real()));
     }
 
-    DualNumber
-    tan(const DualNumber &phi) noexcept {
+    DualNumber tan(const DualNumber &phi) noexcept {
         const double cr = real_cos(phi.real());
 
         return DualNumber(
@@ -170,15 +148,13 @@ namespace DualNumberAlgebra {
                 phi.dual() / cr / cr);
     }
 
-    DualNumber
-    atan(const DualNumber &w) noexcept {
+    DualNumber atan(const DualNumber &w) noexcept {
         return DualNumber(
                 real_atan(w.real()),
                 w.dual() / (1 + w.real() * w.real()));
     }
 
-    DualNumber
-    atan2(const DualNumber &y, const DualNumber &x) noexcept {
+    DualNumber atan2(const DualNumber &y, const DualNumber &x) noexcept {
         const double &xr = x.real();
         const double &yr = y.real();
         const double &xd = x.dual();
@@ -194,8 +170,7 @@ namespace DualNumberAlgebra {
         return (stream << d.real() << (dual < 0 ? "-" : "+") << std::abs(dual) << "ϵ");
     }
 
-    std::vector<DualNumber>
-    solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset) {
+    std::vector<DualNumber> solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset) {
         DualNumber dd = cos_factor * cos_factor +
                         sin_factor * sin_factor -
                         offset * offset;
@@ -219,46 +194,38 @@ namespace DualNumberAlgebra {
         }
     }
 
-    DualNumber
-    operator+(double lhs, DualNumber rhs) noexcept {
+    DualNumber operator+(double lhs, DualNumber rhs) noexcept {
         return rhs + lhs;
     }
 
-    DualNumber
-    operator*(double lhs, DualNumber rhs) noexcept {
+    DualNumber operator*(double lhs, DualNumber rhs) noexcept {
         return rhs * lhs;
     }
 
-    DualNumber
-    operator-(double lhs, DualNumber rhs) noexcept {
+    DualNumber operator-(double lhs, DualNumber rhs) noexcept {
         return DualNumber(lhs) - rhs;
     }
 
-    DualNumber
-    operator/(double lhs, DualNumber rhs) {
+    DualNumber operator/(double lhs, DualNumber rhs) {
         return DualNumber(lhs) / rhs;
     }
 
-    bool
-    operator==(const DualNumber &lhs, const DualNumber &rhs) noexcept {
+    bool operator==(const DualNumber &lhs, const DualNumber &rhs) noexcept {
         return (lhs.real() == rhs.real()) && (lhs.dual() == rhs.dual());
     }
 
-    bool
-    eq_angle(const DualNumber &lhs, const DualNumber &rhs, double eps_p, double eps_d) noexcept {
+    bool eq_angle(const DualNumber &lhs, const DualNumber &rhs, double eps_p, double eps_d) noexcept {
         double n = (lhs.real() - rhs.real()) / (2 * M_PI);
         double delta = std::abs(n - std::floor(n));
         return delta < eps_p && (std::abs(lhs.dual() - rhs.dual()) < eps_d);
     }
 
     namespace literals{
-        DualNumber
-        operator ""_s(long double dual) noexcept {
+        DualNumber operator ""_s(long double dual) noexcept {
             return DualNumber(0.0, dual);
         }
 
-        DualNumber
-        operator ""_s(unsigned long long dual) noexcept {
+        DualNumber operator ""_s(unsigned long long dual) noexcept {
             return DualNumber(0.0, static_cast<double>(dual));
         }
     }
