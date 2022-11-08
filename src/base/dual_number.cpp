@@ -165,10 +165,12 @@ namespace DualNumberAlgebra {
                 (xr * xr + yr * yr));
     }
 
+    // LCOV_EXCL_START exclude from coverage as testing an output automatically is a bit... useless?
     std::ostream &operator<<(std::ostream &stream, DualNumber const &d) {
         double dual = d.dual();
         return (stream << d.real() << (dual < 0 ? "-" : "+") << std::abs(dual) << "ϵ");
     }
+    // LCOV_EXCL_STOP
 
     std::vector<DualNumber> solve_trigonometric_equation(const DualNumber &cos_factor,const DualNumber &sin_factor, const DualNumber &offset) {
         DualNumber dd = cos_factor * cos_factor +
