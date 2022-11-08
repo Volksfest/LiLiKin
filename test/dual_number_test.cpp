@@ -35,6 +35,10 @@ TEST(DualNumberAlgebra, Creation) { // NOLINT
 
     EXPECT_EQ(b_1, b_2);
     EXPECT_EQ(b_1, b_3);
+
+    DualNumber c = 5 + 3_s;
+    DualNumber mc = -c;
+    EXPECT_EQ(mc, -5 - 3_s);
 }
 
 TEST(DualNumberAlgebra, Basic) { // NOLINT
@@ -61,6 +65,27 @@ TEST(DualNumberAlgebra, Basic) { // NOLINT
     double c = 2.4;
     DualNumber d = c + a;
     EXPECT_EQ(d, 3.4 + 5.5_s);
+
+    DualNumber e = 2 + 2_s;
+    EXPECT_EQ(c / e, 1.2 - 1.2_s);
+}
+
+TEST(DualNumberAlgebra, ComputeAssign) { //NOLINT
+    DualNumber a = 1 + 2_s;
+    DualNumber b = 3 - 1_s;
+    DualNumber c = 4 + 1_s;
+
+    a += b;
+    EXPECT_EQ(a, 4 + 1_s);
+
+    a *= b;
+    EXPECT_EQ(a, 12 - 1_s);
+
+    a /= c;
+    EXPECT_EQ(a, 3 + -1_s);
+
+    a -=c;
+    EXPECT_EQ(a, -1 - 2_s);
 }
 
 TEST(DualNumberAlgebra, Advanced) { //NOLINT
@@ -89,21 +114,61 @@ TEST(DualNumberAlgebra, Advanced) { //NOLINT
     EXPECT_NEAR_DN(res, DualNumber(1/M_2_SQRTPI, M_PI_4 * M_2_SQRTPI / 2), 0.01);
 }
 
+TEST(DualNumberAlgebra, Norm) { //NOLINT
+    DualNumber a = 5 + 3_s;
+    DualNumber ma = -a;
+    DualNumber b = 5 + 8_s;
+    DualNumber c = -5 + 8_s;
+    DualNumber d = -2 - 3_s;
+    DualNumber e = 4 - 2_s;
+
+    EXPECT_EQ(a.norm(), 5);
+    EXPECT_EQ(ma.norm(), 5);
+    EXPECT_EQ(b.norm(), 5);
+    EXPECT_EQ(c.norm(), 5);
+
+    EXPECT_EQ(d.norm(), 2);
+    EXPECT_EQ(e.norm(), 4);
+
+    EXPECT_EQ(a.norm_square(), 25);
+    EXPECT_EQ(ma.norm_square(), 25);
+    EXPECT_EQ(d.norm_square(), 4);
+    EXPECT_EQ(e.norm_square(), 16);
+}
+
+TEST(DualNumberAlgebra, Zero) { //NOLINT
+    DualNumber z = 0 + 0_s;
+    DualNumber zd = 0 + 3_s;
+    DualNumber pd = 5 + 0_s;
+
+    DualNumber d = 5 + 3_s;
+
+    EXPECT_TRUE(z.is_zero());
+    EXPECT_FALSE(zd.is_zero());
+    EXPECT_FALSE(pd.is_zero());
+
+    DualNumber sum = zd + pd - d;
+    EXPECT_TRUE(sum.is_zero());
+}
+
 TEST(DualNumberAlgebra, Exception) { //NOLINT
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator(seed); // NOLINT
-    std::uniform_real_distribution<double> distribution_huge(-100,100);
-    auto band = std::bind(distribution_huge, generator);
+    DualNumber z(0, 0);
+    DualNumber zd(0, 4);
+    DualNumber pd(2, 4);
 
-    auto zero = DualNumber(0, band());
+    EXPECT_NEAR_DN(pd.inverse(), 0.5 - 1_s, 0.01);
+    EXPECT_THROW(z.inverse(), std::logic_error);
+    EXPECT_THROW(zd.inverse(), std::logic_error);
 
-    auto any = DualNumber(band() + 101, band()); // cannot be zero
+    EXPECT_NEAR_DN(2 / pd, 1 - 2_s, 0.1);
+    EXPECT_THROW(2 / z, std::logic_error);
+    EXPECT_THROW(2 / zd, std::logic_error);
 
-    EXPECT_NEAR_DN(any, any.inverse().inverse(), 0.01);
-    EXPECT_NEAR_DN(zero, any * (zero / any), 0.01);
+    EXPECT_THROW( pd /= zd, std::logic_error);
+}
 
-    EXPECT_THROW(zero.inverse(), std::logic_error);
-    EXPECT_THROW(any/zero, std::logic_error);
+TEST(DualNumberAlgebra, TrigEq) { // NOLINT
+
 }
 
 TEST(DualNumberAlgebra, Random) { // NOLINT
