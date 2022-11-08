@@ -25,21 +25,9 @@ namespace DualNumberAlgebra {
 
     double (*real_sqrt)(double) = std::sqrt;
 
-    DualNumber &
-    DualNumber::operator=(const double &real) noexcept {
-        this->_real = real;
-        this->_dual = 0;
-        return *this;
-    }
-
     DualNumber
     DualNumber::operator+(const DualNumber &rhs) const noexcept {
         return DualNumber(this->_real + rhs._real, this->_dual + rhs._dual);
-    }
-
-    DualNumber
-    DualNumber::operator+() const noexcept {
-        return DualNumber(this->_real, this->_dual);
     }
 
     DualNumber &
