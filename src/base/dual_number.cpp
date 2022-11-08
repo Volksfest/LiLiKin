@@ -81,9 +81,9 @@ namespace DualNumberAlgebra {
         if (rhs._real == 0) {
             throw std::logic_error("Cannot divide by (a real part equal to) zero");
         }
-        this->_real /= rhs._real;
         this->_dual /= rhs._real;
         this->_dual -= this->_real * rhs._dual / rhs._real / rhs._real;
+        this->_real /= rhs._real;
         return *this;
     }
 
