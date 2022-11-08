@@ -78,19 +78,6 @@ namespace DualNumberAlgebra {
         DualNumber &operator=(DualNumber &&rhs) = default;
 
         /**
-         * \brief Conversion operator for implicit usage of doubles with zero dual part
-         * @param real
-         * @return
-         */
-        DualNumber &operator=(const double &real) noexcept;
-
-        /**
-         * \brief Just for completeness
-         * @return
-         */
-        DualNumber operator+() const noexcept;
-
-        /**
          * \brief Additive inverse of the dual number
          * @return
          */
