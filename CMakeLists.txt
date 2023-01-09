@@ -80,6 +80,9 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
     target_include_directories(lilikin_tests PRIVATE include)
     target_link_libraries(lilikin_tests gtest_main lilikin)
 
+    message(STATUS "Googletest cloned. Will also create tests. After build, run them with:")
+    message(STATUS "    ./lilikin_tests")
+
     ### Coverage # Only in Debug
 
     if(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -92,13 +95,17 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
             EXECUTABLE ./lilikin_tests
             DEPENDENCIES lilikin_tests
             BASE_DIRECTORY ${PROJECT_SOURCE_DIR}
-            EXCLUDE "${PROJECT_SOURCE_DIR}/googletest" "${PROJECT_SOURCE_DIR}/example.cpp")
-    endif()
+            EXCLUDE
+                "${PROJECT_SOURCE_DIR}/googletest"
+                "${PROJECT_SOURCE_DIR}/example.cpp"
+                "${PROJECT_SOURCE_DIR}/include"
+                "${PROJECT_SOURCE_DIR}/test")
 
-    message(STATUS "Googletest cloned. Will also create tests. After build, run them with:")
-    message(STATUS "    ./lilikin_tests")
-    message(STATUS "Coverage test can be invoked with:")
-    message(STATUS "    ./make coverage_test")
+        message(STATUS "Coverage also build. Test can be invoked with:")
+        message(STATUS "    make coverage_test")
+    else()
+        message(STATUS "Coverage tests only available in Debug builds.")
+    endif()
 else()
     message(STATUS "Googletest not cloned. Tests will be omitted!")
 endif()
