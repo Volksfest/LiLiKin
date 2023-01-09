@@ -4,6 +4,8 @@ project("Library for Line Kinematics" VERSION 0.2)
 
 set(CMAKE_CXX_STANDARD 17)
 
+SET(COVERAGE_FILTER "" CACHE STRING "Filter for the tests run by the coverage test")
+
 ### Project
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
@@ -90,9 +92,21 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
         include(CodeCoverage)
         append_coverage_compiler_flags()
 
+        if("${COVERAGE_FILTER}" STREQUAL "")
+            set(COVERAGE_EXECUTABLE_ARGS "")
+            message(STATUS "Coverage test will be build. All tests in the google tests will be executed.")
+            message(STATUS "Change COVERAGE_FILTER to filter some tests as in --gtest_filter.")
+        else()
+            set(COVERAGE_EXECUTABLE_ARGS "--gtest_filter=${COVERAGE_FILTER}*")
+            message(STATUS "Coverage test will be build. Only tests starting with <${COVERAGE_FILTER}> will be executed.")
+        endif()
+        message(STATUS "Coverage test can be invoked with:")
+        message(STATUS "    make coverage_test")
+
         setup_target_for_coverage_gcovr_html(
             NAME coverage_test
             EXECUTABLE ./lilikin_tests
+            EXECUTABLE_ARGS ${COVERAGE_EXECUTABLE_ARGS}
             DEPENDENCIES lilikin_tests
             BASE_DIRECTORY ${PROJECT_SOURCE_DIR}
             EXCLUDE
@@ -101,8 +115,6 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
                 "${PROJECT_SOURCE_DIR}/include"
                 "${PROJECT_SOURCE_DIR}/test")
 
-        message(STATUS "Coverage also build. Test can be invoked with:")
-        message(STATUS "    make coverage_test")
     else()
         message(STATUS "Coverage tests only available in Debug builds.")
     endif()
