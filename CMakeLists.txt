@@ -78,6 +78,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
             test/screws_test.cpp
             test/ccc_test.cpp
             test/random_test.cpp
+            test/acos3_test.cpp
             )
     target_include_directories(lilikin_tests PRIVATE include)
     target_link_libraries(lilikin_tests gtest_main lilikin)
