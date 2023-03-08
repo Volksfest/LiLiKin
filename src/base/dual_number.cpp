@@ -218,7 +218,7 @@ namespace DualNumberAlgebra {
 
     bool eq_angle(const DualNumber &lhs, const DualNumber &rhs, double eps_p, double eps_d) noexcept {
         double n = (lhs.real() - rhs.real()) / (2 * M_PI);
-        double delta = std::abs(n - std::floor(n));
+        double delta = std::abs(n - (n > 0? std::floor(n) : std::ceil(n)) );
         return delta < eps_p && (std::abs(lhs.dual() - rhs.dual()) < eps_d);
     }
 
