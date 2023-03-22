@@ -1,3 +1,7 @@
+# Remark
+
+This repository is quite abandoned. Don't expect any updates. If you have questions, especially more on the theory side, you ware welcomed to ask (just create an issue)
+
 # LiLiKin - Library for Line Kinematics
 
 The basic idea is to create a CCC mechanism, which is a fully actuated mechanism in a 6D Task Space.
